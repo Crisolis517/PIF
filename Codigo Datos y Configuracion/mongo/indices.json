@@ -1,0 +1,20 @@
+{
+  "seguimiento_riesgo": [
+    {"keys": [["estudiante_id", 1], ["periodo", 1]], "unique": true, "name": "ux_estudiante_periodo",
+     "justificacion": "Clave natural del documento; evita duplicados y acelera el $lookup por estudiante."},
+    {"keys": [["periodo", 1]], "name": "ix_periodo",
+     "justificacion": "Filtro por corte temporal (P1 para la predicción temprana)."},
+    {"keys": [["interacciones_lms.asignatura", 1], ["periodo", 1]], "name": "ix_lms_asignatura_periodo",
+     "justificacion": "Índice multiclave para agregaciones de actividad por asignatura y período."}
+  ],
+  "alertas_riesgo": [
+    {"keys": [["alerta_id", 1]], "unique": true, "name": "ux_alerta_id",
+     "justificacion": "Identificador de negocio único."},
+    {"keys": [["estudiante_id", 1], ["periodo", 1]], "name": "ix_estudiante_periodo",
+     "justificacion": "Cruce con seguimiento_riesgo y con PostgreSQL por estudiante_id."},
+    {"keys": [["estado", 1], ["nivel", 1]], "name": "ix_estado_nivel",
+     "justificacion": "Tablero de orientación: alertas abiertas por nivel."},
+    {"keys": [["notas.texto_normalizado", "text"]], "name": "tx_notas", "default_language": "spanish",
+     "justificacion": "Búsqueda de texto libre en notas de orientación (componente no estructurado)."}
+  ]
+}

@@ -1,0 +1,11 @@
+variable_avance,variable_final,decision
+estudiante_id,estudiante_id,Se mantiene; ahora con regla de identidad documentada (R-12).
+"periodo (""2026-1"")",columnas nota_p1/p2/p3 + corte,Etiqueta errónea; los períodos son P1–P3 de 2005–06 (config.PERIODOS).
+"escuela, zona, tiempo_estudio","escuela, zona, tiempo_estudio",Sin cambios.
+promedio_general,nota_p1 (y nota_p2 en el escenario B),Eliminado: incluía G3 (fuga de información).
+faltas_totales,faltas,"Por matrícula; anual (no se usa en el modelo temprano, L-02)."
+reprobaciones_totales,reprobaciones_previas,Por matrícula (failures depende de la asignatura).
+n_interacciones_lms,sim_lms_eventos_p1 / sim_lms_eventos_total,Prefijo sim_: variable simulada.
+minutos_lms,sim_lms_minutos_p1 / sim_lms_minutos_total,Prefijo sim_: variable simulada.
+n_tutorias,sim_n_tutorias,Posterior al corte P1: solo descriptiva.
+en_riesgo,en_riesgo,Definida: G3 < 10 (incluye no evaluados).

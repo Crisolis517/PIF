@@ -1,0 +1,104 @@
+2026-09-26 14:07:27 | INFO | ==> Inicio etapa: 1_extract
+2026-09-26 14:07:27 | INFO | [extract_MAT] {"filas_leidas": 395, "columnas": 33, "sha256": "e47f9ee225e1ee6e69b7564e6dac7123e80b8486677fe111f351964cef5dec80"}
+2026-09-26 14:07:27 | INFO | [extract_POR] {"filas_leidas": 649, "columnas": 33, "sha256": "a7594a11d7771c0efe1a740824e0e833da9c4cad07c39a9766a874575563fb3f"}
+2026-09-26 14:07:27 | INFO | [R-01] Esquema: 33 columnas esperadas y tipos declarados -> afectados=0
+2026-09-26 14:07:27 | INFO | [extract] {"filas_totales": 1044}
+2026-09-26 14:07:27 | INFO | [1_extract] {"duracion_s": 0.067}
+2026-09-26 14:07:27 | INFO | ==> Inicio etapa: 2_transform_uci
+2026-09-26 14:07:27 | INFO | [R-02] Valores faltantes en las 33 columnas -> afectados=0
+2026-09-26 14:07:27 | INFO | [R-03] Filas duplicadas exactas (33 columnas) dentro de cada archivo -> afectados=0
+2026-09-26 14:07:27 | INFO | [R-04] Valores categóricos fuera del catálogo UCI -> afectados=0
+2026-09-26 14:07:27 | INFO | [R-05] Valores numéricos fuera de rango documentado -> afectados=0
+2026-09-26 14:07:27 | INFO | [R-11] Clave de 13 atributos repetida dentro del mismo archivo (15 grupos); fusionarlas eliminaría 16 matrículas reales -> afectados=31
+2026-09-26 14:07:27 | INFO | [R-12] Emparejamiento MAT-POR: 366 claves comunes; merge ingenuo = 382 filas; pares aceptados = 370 (etapa 1: 358, etapa 2: 12); rechazados = 0 -> afectados=370
+2026-09-26 14:07:27 | INFO | [R-13] Conflictos en atributos personales entre filas del mismo estudiante -> afectados=0
+2026-09-26 14:07:27 | INFO | [R-12b] Posibles falsos negativos: filas sin pareja que coinciden en 26/27 atributos con una fila sin pareja del otro archivo -> afectados=5
+2026-09-26 14:07:27 | INFO | [identidad] {"filas_uci": 1044, "claves_comunes": 366, "claves_distintas_mat": 391, "claves_distintas_por": 637, "claves_distintas_union": 662, "grupos_clave_repetida": 15, "filas_perdidas_si_fusion": 16, "filas_merge_ingenuo": 382, "pares_aceptados": 370, "pares_etapa1": 358, "pares_etapa2": 12, "candidatos_rechazados": 0, "estudiantes": 674, "solo_mat": 25, "solo_por": 279}
+2026-09-26 14:07:27 | INFO | [R-06] Estandarización: 8 binarias yes/no -> booleano; códigos -> etiquetas en español; nombres snake_case -> afectados=1044
+2026-09-26 14:07:27 | INFO | [R-07] Reprobaciones previas truncadas: valor 3 codifica '3 o más' -> afectados=30
+2026-09-26 14:07:27 | INFO | [R-08] Nota 0 interpretada como 'no evaluado' (G1=1, G2=20, G3=53) -> afectados=74
+2026-09-26 14:07:27 | INFO | [R-09] Faltas = 0 en matrículas con G3 no evaluado (53 con G3=0, 53 con 0 faltas): registro de asistencia no confiable -> afectados=53
+2026-09-26 14:07:27 | INFO | [R-10] Faltas extremas (> Q3 + 3·RIC por asignatura) -> afectados=8
+2026-09-26 14:07:27 | INFO | [R-14] Despivotado 1FN: G1, G2, G3 -> filas (matrícula × período) -> afectados=3132
+2026-09-26 14:07:27 | INFO | [transform_uci] {"filas_escuela": 2, "filas_asignatura": 2, "filas_periodo": 3, "filas_estudiante": 674, "filas_matricula": 1044, "filas_calificacion": 3132}
+2026-09-26 14:07:27 | INFO | [2_transform_uci] {"duracion_s": 0.267}
+2026-09-26 14:07:27 | INFO | ==> Inicio etapa: 3_generate_synthetic
+2026-09-26 14:07:28 | INFO | [generate_synthetic] {"eventos_generados": 47933, "tipo_no_estandar": 2397, "duracion_negativa": 240, "duracion_excesiva": 240, "fecha_fuera_calendario": 144, "estudiante_inexistente": 96, "fecha_faltante": 96, "evento_duplicado": 959, "tutorias_generadas": 550, "tutoria_resultado_no_estandar": 28, "tutoria_fecha_fuera_calendario": 6, "alertas_generadas": 282, "alerta_actualizado_incoherente": 34, "notas_generadas": 575}
+2026-09-26 14:07:28 | INFO | [3_generate_synthetic] {"duracion_s": 0.672}
+2026-09-26 14:07:28 | INFO | ==> Inicio etapa: 4_transform_synthetic
+2026-09-26 14:07:28 | INFO | [R-15] Campos obligatorios ausentes (evento_id, estudiante_id, asignatura, fecha, tipo) -> afectados=96
+2026-09-26 14:07:28 | INFO | [R-16] Eventos duplicados (mismo evento_id) -> afectados=959
+2026-09-26 14:07:28 | INFO | [R-17] Integridad referencial: (estudiante_id, asignatura) sin matrícula en PostgreSQL -> afectados=96
+2026-09-26 14:07:28 | INFO | [R-18] Fecha fuera del calendario lectivo 2005–2006 -> afectados=144
+2026-09-26 14:07:28 | INFO | [R-19] Asignación de período (P1/P2/P3) por fecha del evento -> afectados=47597
+2026-09-26 14:07:28 | INFO | [R-20] Tipo de evento no estandarizado (mayúsculas, espacios, inglés) -> afectados=2397
+2026-09-26 14:07:28 | INFO | [R-21] Duración negativa (error de registro) -> afectados=240
+2026-09-26 14:07:28 | INFO | [R-22] Duración > 240 min (sesión no cerrada) -> afectados=240
+2026-09-26 14:07:28 | INFO | [clean_lms] {"eventos_crudos": 48892, "eventos_limpios": 47597}
+2026-09-26 14:07:28 | INFO | [R-23] Tutorías: resultado no estandarizado (28 mapeados) y fecha fuera de calendario o sin matrícula (6 a cuarentena) -> afectados=34
+2026-09-26 14:07:28 | INFO | [clean_tutorias] {"tutorias_crudas": 550, "tutorias_limpias": 544}
+2026-09-26 14:07:28 | INFO | [R-24] Coherencia temporal: actualizado_en >= última fecha del historial/notas (corregidas 34); historial ordenado (0); estado = último del historial (0) -> afectados=34
+2026-09-26 14:07:28 | INFO | [R-25] Texto libre: normalización (minúsculas, tildes, abreviaturas, puntuación) y categorización por léxico ({'academico': 215, 'asistencia': 117, 'conducta': 73, 'familiar': 78, 'motivacion': 92}) -> afectados=575
+2026-09-26 14:07:28 | INFO | [clean_alertas] {"alertas": 282, "notas": 575, "cat_academico": 215, "cat_asistencia": 117, "cat_motivacion": 92, "cat_familiar": 78, "cat_conducta": 73}
+2026-09-26 14:07:29 | INFO | [transform_synthetic] {"docs_seguimiento": 2022, "docs_alertas": 282, "registros_cuarentena": 342, "cuarentena_por_regla": {"R-15": 96, "R-17": 96, "R-18": 144, "R-23": 6}}
+2026-09-26 14:07:29 | INFO | [4_transform_synthetic] {"duracion_s": 1.323}
+2026-09-26 14:07:29 | INFO | ==> Inicio etapa: 5_load_postgres
+2026-09-26 14:07:30 | INFO | [load_postgres] {"servidor": "PostgreSQL 18.6", "filas_escuela": 2, "filas_asignatura": 2, "filas_periodo": 3, "filas_estudiante": 674, "filas_matricula": 1044, "filas_calificacion": 3132, "total_registros": 4857}
+2026-09-26 14:07:30 | INFO | [sql_integridad] {"controles": 11, "superados": 11}
+2026-09-26 14:07:30 | INFO | Consulta A-01 -> 6 filas
+2026-09-26 14:07:30 | INFO | Consulta A-02 -> 4 filas
+2026-09-26 14:07:30 | INFO | Consulta A-03 -> 8 filas
+2026-09-26 14:07:30 | INFO | Consulta A-04 -> 4 filas
+2026-09-26 14:07:30 | INFO | [5_load_postgres] {"duracion_s": 0.803}
+2026-09-26 14:07:30 | INFO | ==> Inicio etapa: 6_load_mongo
+2026-09-26 14:07:30 | INFO | [load_mongo] {"servidor": "MongoDB 8.0.4", "rechazados_validador": 0, "prueba_validador_alerta_incoherente_rechazada": true, "prueba_validador_evento_fuera_periodo_rechazado": true, "seguimiento_riesgo": 2022, "alertas_riesgo": 282, "cuarentena": 342, "eventos_lms_embebidos": 47597, "tutorias_embebidas": 544, "estudiantes_cubiertos": 674}
+2026-09-26 14:07:30 | INFO | Pipeline AG-01_lms_por_matricula_periodo -> 3086 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-02_tutorias_por_matricula -> 245 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-03_alertas_por_matricula -> 282 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-04_alertas_con_tutoria_posterior -> 3 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-05_estado_nivel -> 9 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-06_categorias_texto -> 15 documentos
+2026-09-26 14:07:30 | INFO | Pipeline AG-07_busqueda_texto -> 3 documentos
+2026-09-26 14:07:30 | INFO | [mongo_almacenamiento] {"seguimiento_riesgo_bytes": 5642073, "alertas_riesgo_bytes": 276031, "seguimiento_riesgo_indices_bytes": 16384, "alertas_riesgo_indices_bytes": 20480}
+2026-09-26 14:07:30 | INFO | [6_load_mongo] {"duracion_s": 0.507}
+2026-09-26 14:07:30 | INFO | ==> Inicio etapa: 7_integrate
+2026-09-26 14:07:30 | INFO | [R-26] Matrículas sin registros simulados tras el LEFT JOIN (sin LMS en P1: 14; sin tutorías: 799; sin alertas: 762) -> afectados=1575
+2026-09-26 14:07:30 | INFO | [DEF-01] Variable objetivo en_riesgo = 1 si G3 < 10 (prevalencia 0.220) -> afectados=230
+2026-09-26 14:07:31 | INFO | [L-04] Partición train/test (80/20) agrupada por estudiante y estratificada por en_riesgo; test = 212 matrículas -> afectados=212
+2026-09-26 14:07:31 | INFO | [integrate] {"filas": 1044, "columnas": 58, "estudiantes": 674, "en_riesgo": 230, "prevalencia": 0.2203, "train": 832, "test": 212, "variables_simuladas": 11}
+2026-09-26 14:07:31 | INFO | [7_integrate] {"duracion_s": 0.197}
+2026-09-26 14:07:31 | INFO | ==> Inicio etapa: 8_analysis
+2026-09-26 14:07:33 | INFO | Modelo C_matricula | Regresión logística: AUC test 0.738
+2026-09-26 14:07:36 | INFO | Modelo C_matricula | Random forest: AUC test 0.750
+2026-09-26 14:07:38 | INFO | Modelo C_matricula | Gradient boosting: AUC test 0.762
+2026-09-26 14:07:38 | INFO | Modelo A_corte_P1 | Línea base (prior): AUC test 0.500
+2026-09-26 14:07:40 | INFO | Modelo A_corte_P1 | Regresión logística: AUC test 0.948
+2026-09-26 14:07:42 | INFO | Modelo A_corte_P1 | Random forest: AUC test 0.940
+2026-09-26 14:07:44 | INFO | Modelo A_corte_P1 | Gradient boosting: AUC test 0.944
+2026-09-26 14:07:45 | INFO | Modelo B_corte_P2 | Regresión logística: AUC test 0.984
+2026-09-26 14:07:48 | INFO | Modelo B_corte_P2 | Random forest: AUC test 0.988
+2026-09-26 14:07:49 | INFO | Modelo B_corte_P2 | Gradient boosting: AUC test 0.984
+2026-09-26 14:07:51 | INFO | Modelo A_mas_sim | Regresión logística: AUC test 0.949
+2026-09-26 14:07:53 | INFO | Modelo A_mas_sim | Random forest: AUC test 0.945
+2026-09-26 14:07:55 | INFO | Modelo A_mas_sim | Gradient boosting: AUC test 0.948
+2026-09-26 14:07:56 | INFO | Modelo A_mas_faltas | Regresión logística: AUC test 0.945
+2026-09-26 14:07:59 | INFO | Modelo A_mas_faltas | Random forest: AUC test 0.942
+2026-09-26 14:08:01 | INFO | Modelo A_mas_faltas | Gradient boosting: AUC test 0.953
+2026-09-26 14:08:02 | INFO | Modelo C_mas_sim | Regresión logística: AUC test 0.737
+2026-09-26 14:08:05 | INFO | Modelo C_mas_sim | Random forest: AUC test 0.755
+2026-09-26 14:08:07 | INFO | Modelo C_mas_sim | Gradient boosting: AUC test 0.777
+2026-09-26 14:08:38 | INFO | [analysis] {"figuras": 8, "exactitud_texto": 1.0, "auc_test_A_logistica": 0.9482}
+2026-09-26 14:08:38 | INFO | [8_analysis] {"duracion_s": 67.874}
+2026-09-26 14:08:38 | INFO | ==> Inicio etapa: 9_benchmark
+2026-09-26 14:08:39 | INFO | Escala x1: 47597 filas, agregación 0.01 s, 1 MB
+2026-09-26 14:08:39 | INFO | Escala x10: 475970 filas, agregación 0.03 s, 9 MB
+2026-09-26 14:08:39 | INFO | Escala x100: 4759700 filas, agregación 0.39 s, 90 MB
+2026-09-26 14:08:41 | INFO | Escala x250: 11899250 filas, agregación 1.21 s, 226 MB
+2026-09-26 14:08:46 | INFO | Escala x500: 23798500 filas, agregación 2.67 s, 452 MB
+2026-09-26 14:08:46 | INFO | [benchmark_escalabilidad] {"escalas": 5, "filas_max": 23798500, "t_agregacion_max_s": 2.674}
+2026-09-26 14:08:46 | INFO | [9_benchmark] {"duracion_s": 8.037}
+2026-09-26 14:08:46 | INFO | ==> Inicio etapa: 10_notebook
+2026-09-26 14:08:51 | INFO | [10_notebook] {"duracion_s": 4.76}
+2026-09-26 14:08:51 | INFO | ==> Inicio etapa: 11_report_tables
+2026-09-26 14:08:51 | INFO | [11_report_tables] {"duracion_s": 0.039}
+2026-09-26 14:08:54 | INFO | Pipeline completo. Resumen en logs/ultima_ejecucion.json

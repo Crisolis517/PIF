@@ -1,0 +1,30 @@
+id,fuente,descripcion,accion,afectados,antes,despues,implementacion
+R-01,F1 UCI,Esquema: 33 columnas esperadas y tipos declarados,Validar/abortar,0,1044.0,1044.0,src/extract.py::leer_csv
+R-02,F1 UCI,Valores faltantes en las 33 columnas,Diagnosticar (imputar si >0),0,1044.0,1044.0,src/transform.py::diagnostico
+R-03,F1 UCI,Filas duplicadas exactas (33 columnas) dentro de cada archivo,Eliminar duplicados,0,1044.0,1044.0,src/transform.py::diagnostico
+R-04,F1 UCI,Valores categóricos fuera del catálogo UCI,Validar/abortar,0,1044.0,1044.0,src/transform.py::diagnostico
+R-05,F1 UCI,Valores numéricos fuera de rango documentado,Validar/abortar,0,1044.0,1044.0,src/transform.py::diagnostico
+R-11,F1 UCI,Clave de 13 atributos repetida dentro del mismo archivo (15 grupos); fusionarlas eliminaría 16 matrículas reales,No fusionar: cada fila es una matrícula distinta,31,1044.0,1044.0,src/transform.py::resolver_identidad
+R-12,F1 UCI,"Emparejamiento MAT-POR: 366 claves comunes; merge ingenuo = 382 filas; pares aceptados = 370 (etapa 1: 358, etapa 2: 12); rechazados = 0",Asignar el mismo estudiante_id al par,370,1044.0,674.0,src/transform.py::resolver_identidad
+R-13,F1 UCI,Conflictos en atributos personales entre filas del mismo estudiante,Prevalece POR (archivo más completo) y se registra,0,,,src/transform.py::resolver_identidad
+R-12b,F1 UCI,Posibles falsos negativos: filas sin pareja que coinciden en 26/27 atributos con una fila sin pareja del otro archivo,No fusionar (regla estricta); declarar y acotar el N de estudiantes,5,,,src/transform.py::resolver_identidad
+R-06,F1 UCI,Estandarización: 8 binarias yes/no -> booleano; códigos -> etiquetas en español; nombres snake_case,Transformar,1044,1044.0,1044.0,src/transform.py::normalizar
+R-07,F1 UCI,Reprobaciones previas truncadas: valor 3 codifica '3 o más',Conservar como ordinal 0-3 (3 = 3+); derivar reprobaciones_3mas en el dataset,30,,,src/transform.py::normalizar
+R-08,F1 UCI,"Nota 0 interpretada como 'no evaluado' (G1=1, G2=20, G3=53)",Marcar no_evaluado; excluir de medias; G3=0 cuenta como reprobación en en_riesgo,74,,,src/transform.py::normalizar
+R-09,F1 UCI,"Faltas = 0 en matrículas con G3 no evaluado (53 con G3=0, 53 con 0 faltas): registro de asistencia no confiable",Marcar faltas_confiable = false,53,,,src/transform.py::normalizar
+R-10,F1 UCI,Faltas extremas (> Q3 + 3·RIC por asignatura),Conservar (valores plausibles) y marcar; log1p en modelos,8,,,src/transform.py::normalizar
+R-14,F1 UCI,"Despivotado 1FN: G1, G2, G3 -> filas (matrícula × período)",Transformar,3132,1044.0,3132.0,src/transform.py::normalizar
+R-15,F2 LMS (sim.),"Campos obligatorios ausentes (evento_id, estudiante_id, asignatura, fecha, tipo)",Cuarentena,96,48892.0,48796.0,src/transform_synthetic.py::limpiar_eventos
+R-16,F2 LMS (sim.),Eventos duplicados (mismo evento_id),"Eliminar, conservar la primera aparición",959,48796.0,47837.0,src/transform_synthetic.py::limpiar_eventos
+R-17,F2 LMS (sim.),"Integridad referencial: (estudiante_id, asignatura) sin matrícula en PostgreSQL",Cuarentena,96,47837.0,47741.0,src/transform_synthetic.py::limpiar_eventos
+R-18,F2 LMS (sim.),Fecha fuera del calendario lectivo 2005–2006,Cuarentena,144,47741.0,47597.0,src/transform_synthetic.py::limpiar_eventos
+R-19,F2 LMS (sim.),Asignación de período (P1/P2/P3) por fecha del evento,Derivar campo periodo,47597,47597.0,47597.0,src/transform_synthetic.py::periodo_de
+R-20,F2 LMS (sim.),"Tipo de evento no estandarizado (mayúsculas, espacios, inglés)","Mapear al catálogo {recurso, tarea, foro, cuestionario}",2397,,,src/transform_synthetic.py::limpiar_eventos
+R-21,F2 LMS (sim.),Duración negativa (error de registro),"Anular duración (el evento cuenta, no suma minutos)",240,,,src/transform_synthetic.py::limpiar_eventos
+R-22,F2 LMS (sim.),Duración > 240 min (sesión no cerrada),Truncar a 240 min,240,,,src/transform_synthetic.py::limpiar_eventos
+R-23,F3 Tutorías (sim.),Tutorías: resultado no estandarizado (28 mapeados) y fecha fuera de calendario o sin matrícula (6 a cuarentena),Mapear resultado; cuarentena,34,550.0,544.0,src/transform_synthetic.py::limpiar_tutorias
+R-24,F3 Alertas (sim.),Coherencia temporal: actualizado_en >= última fecha del historial/notas (corregidas 34); historial ordenado (0); estado = último del historial (0),Corregir y registrar,34,282.0,282.0,src/transform_synthetic.py::limpiar_alertas
+R-25,F3 Alertas (sim.),"Texto libre: normalización (minúsculas, tildes, abreviaturas, puntuación) y categorización por léxico ({'academico': 215, 'asistencia': 117, 'conducta': 73, 'familiar': 78, 'motivacion': 92})",Derivar texto_normalizado y categoria,575,,,src/transform_synthetic.py::normalizar_texto / categorizar
+R-26,Integración,Matrículas sin registros simulados tras el LEFT JOIN (sin LMS en P1: 14; sin tutorías: 799; sin alertas: 762),Imputar 0 (ausencia de registro = ausencia de actividad),1575,1044.0,1044.0,src/integrate.py::construir
+DEF-01,Integración,Variable objetivo en_riesgo = 1 si G3 < 10 (prevalencia 0.220),Derivar,230,,,src/integrate.py::construir
+L-04,Integración,Partición train/test (80/20) agrupada por estudiante y estratificada por en_riesgo; test = 212 matrículas,Fijar antes de explorar,212,,,src/integrate.py::construir
