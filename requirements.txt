@@ -1,0 +1,18 @@
+# Python 3.9+ (probado con 3.9.6 en macOS arm64). Versiones fijadas para reproducibilidad.
+# requirements-lock.txt contiene el entorno completo congelado (pip freeze).
+pandas==2.2.3
+numpy==1.26.4
+scipy==1.13.1
+scikit-learn==1.5.2
+statsmodels==0.14.4
+matplotlib==3.9.2
+pyarrow==17.0.0
+SQLAlchemy==2.0.36
+psycopg[binary]==3.2.13
+pymongo==4.10.1
+python-dotenv==1.0.1
+pytest==8.3.3
+nbformat==5.10.4
+nbconvert==7.16.4
+ipykernel==6.29.5
+jupyter_client==8.6.3

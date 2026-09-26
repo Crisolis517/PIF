@@ -1,0 +1,557 @@
+{
+  "etapas": {
+    "extract_MAT": {
+      "filas_leidas": 395,
+      "columnas": 33,
+      "sha256": "e47f9ee225e1ee6e69b7564e6dac7123e80b8486677fe111f351964cef5dec80"
+    },
+    "extract_POR": {
+      "filas_leidas": 649,
+      "columnas": 33,
+      "sha256": "a7594a11d7771c0efe1a740824e0e833da9c4cad07c39a9766a874575563fb3f"
+    },
+    "extract": {
+      "filas_totales": 1044
+    },
+    "1_extract": {
+      "duracion_s": 0.067
+    },
+    "identidad": {
+      "filas_uci": 1044,
+      "claves_comunes": 366,
+      "claves_distintas_mat": 391,
+      "claves_distintas_por": 637,
+      "claves_distintas_union": 662,
+      "grupos_clave_repetida": 15,
+      "filas_perdidas_si_fusion": 16,
+      "filas_merge_ingenuo": 382,
+      "pares_aceptados": 370,
+      "pares_etapa1": 358,
+      "pares_etapa2": 12,
+      "candidatos_rechazados": 0,
+      "estudiantes": 674,
+      "solo_mat": 25,
+      "solo_por": 279
+    },
+    "transform_uci": {
+      "filas_escuela": 2,
+      "filas_asignatura": 2,
+      "filas_periodo": 3,
+      "filas_estudiante": 674,
+      "filas_matricula": 1044,
+      "filas_calificacion": 3132
+    },
+    "2_transform_uci": {
+      "duracion_s": 0.267
+    },
+    "generate_synthetic": {
+      "eventos_generados": 47933,
+      "tipo_no_estandar": 2397,
+      "duracion_negativa": 240,
+      "duracion_excesiva": 240,
+      "fecha_fuera_calendario": 144,
+      "estudiante_inexistente": 96,
+      "fecha_faltante": 96,
+      "evento_duplicado": 959,
+      "tutorias_generadas": 550,
+      "tutoria_resultado_no_estandar": 28,
+      "tutoria_fecha_fuera_calendario": 6,
+      "alertas_generadas": 282,
+      "alerta_actualizado_incoherente": 34,
+      "notas_generadas": 575
+    },
+    "3_generate_synthetic": {
+      "duracion_s": 0.672
+    },
+    "clean_lms": {
+      "eventos_crudos": 48892,
+      "eventos_limpios": 47597
+    },
+    "clean_tutorias": {
+      "tutorias_crudas": 550,
+      "tutorias_limpias": 544
+    },
+    "clean_alertas": {
+      "alertas": 282,
+      "notas": 575,
+      "cat_academico": 215,
+      "cat_asistencia": 117,
+      "cat_motivacion": 92,
+      "cat_familiar": 78,
+      "cat_conducta": 73
+    },
+    "transform_synthetic": {
+      "docs_seguimiento": 2022,
+      "docs_alertas": 282,
+      "registros_cuarentena": 342,
+      "cuarentena_por_regla": {
+        "R-15": 96,
+        "R-17": 96,
+        "R-18": 144,
+        "R-23": 6
+      }
+    },
+    "4_transform_synthetic": {
+      "duracion_s": 1.323
+    },
+    "load_postgres": {
+      "servidor": "PostgreSQL 18.6",
+      "filas_escuela": 2,
+      "filas_asignatura": 2,
+      "filas_periodo": 3,
+      "filas_estudiante": 674,
+      "filas_matricula": 1044,
+      "filas_calificacion": 3132,
+      "total_registros": 4857
+    },
+    "sql_integridad": {
+      "controles": 11,
+      "superados": 11
+    },
+    "5_load_postgres": {
+      "duracion_s": 0.803
+    },
+    "load_mongo": {
+      "servidor": "MongoDB 8.0.4",
+      "rechazados_validador": 0,
+      "prueba_validador_alerta_incoherente_rechazada": true,
+      "prueba_validador_evento_fuera_periodo_rechazado": true,
+      "seguimiento_riesgo": 2022,
+      "alertas_riesgo": 282,
+      "cuarentena": 342,
+      "eventos_lms_embebidos": 47597,
+      "tutorias_embebidas": 544,
+      "estudiantes_cubiertos": 674
+    },
+    "mongo_almacenamiento": {
+      "seguimiento_riesgo_bytes": 5642073,
+      "alertas_riesgo_bytes": 276031,
+      "seguimiento_riesgo_indices_bytes": 16384,
+      "alertas_riesgo_indices_bytes": 20480
+    },
+    "6_load_mongo": {
+      "duracion_s": 0.507
+    },
+    "integrate": {
+      "filas": 1044,
+      "columnas": 58,
+      "estudiantes": 674,
+      "en_riesgo": 230,
+      "prevalencia": 0.2203,
+      "train": 832,
+      "test": 212,
+      "variables_simuladas": 11
+    },
+    "7_integrate": {
+      "duracion_s": 0.197
+    },
+    "analysis": {
+      "figuras": 8,
+      "exactitud_texto": 1.0,
+      "auc_test_A_logistica": 0.9482
+    },
+    "8_analysis": {
+      "duracion_s": 67.874
+    },
+    "benchmark_escalabilidad": {
+      "escalas": 5,
+      "filas_max": 23798500,
+      "t_agregacion_max_s": 2.674
+    },
+    "9_benchmark": {
+      "duracion_s": 8.037
+    },
+    "10_notebook": {
+      "duracion_s": 4.76
+    },
+    "11_report_tables": {
+      "duracion_s": 0.039
+    }
+  },
+  "reglas": [
+    {
+      "id": "R-01",
+      "fuente": "F1 UCI",
+      "descripcion": "Esquema: 33 columnas esperadas y tipos declarados",
+      "accion": "Validar/abortar",
+      "afectados": 0,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/extract.py::leer_csv"
+    },
+    {
+      "id": "R-02",
+      "fuente": "F1 UCI",
+      "descripcion": "Valores faltantes en las 33 columnas",
+      "accion": "Diagnosticar (imputar si >0)",
+      "afectados": 0,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::diagnostico"
+    },
+    {
+      "id": "R-03",
+      "fuente": "F1 UCI",
+      "descripcion": "Filas duplicadas exactas (33 columnas) dentro de cada archivo",
+      "accion": "Eliminar duplicados",
+      "afectados": 0,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::diagnostico"
+    },
+    {
+      "id": "R-04",
+      "fuente": "F1 UCI",
+      "descripcion": "Valores categóricos fuera del catálogo UCI",
+      "accion": "Validar/abortar",
+      "afectados": 0,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::diagnostico"
+    },
+    {
+      "id": "R-05",
+      "fuente": "F1 UCI",
+      "descripcion": "Valores numéricos fuera de rango documentado",
+      "accion": "Validar/abortar",
+      "afectados": 0,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::diagnostico"
+    },
+    {
+      "id": "R-11",
+      "fuente": "F1 UCI",
+      "descripcion": "Clave de 13 atributos repetida dentro del mismo archivo (15 grupos); fusionarlas eliminaría 16 matrículas reales",
+      "accion": "No fusionar: cada fila es una matrícula distinta",
+      "afectados": 31,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::resolver_identidad"
+    },
+    {
+      "id": "R-12",
+      "fuente": "F1 UCI",
+      "descripcion": "Emparejamiento MAT-POR: 366 claves comunes; merge ingenuo = 382 filas; pares aceptados = 370 (etapa 1: 358, etapa 2: 12); rechazados = 0",
+      "accion": "Asignar el mismo estudiante_id al par",
+      "afectados": 370,
+      "antes": 1044,
+      "despues": 674,
+      "implementacion": "src/transform.py::resolver_identidad"
+    },
+    {
+      "id": "R-13",
+      "fuente": "F1 UCI",
+      "descripcion": "Conflictos en atributos personales entre filas del mismo estudiante",
+      "accion": "Prevalece POR (archivo más completo) y se registra",
+      "afectados": 0,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::resolver_identidad"
+    },
+    {
+      "id": "R-12b",
+      "fuente": "F1 UCI",
+      "descripcion": "Posibles falsos negativos: filas sin pareja que coinciden en 26/27 atributos con una fila sin pareja del otro archivo",
+      "accion": "No fusionar (regla estricta); declarar y acotar el N de estudiantes",
+      "afectados": 5,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::resolver_identidad"
+    },
+    {
+      "id": "R-06",
+      "fuente": "F1 UCI",
+      "descripcion": "Estandarización: 8 binarias yes/no -> booleano; códigos -> etiquetas en español; nombres snake_case",
+      "accion": "Transformar",
+      "afectados": 1044,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-07",
+      "fuente": "F1 UCI",
+      "descripcion": "Reprobaciones previas truncadas: valor 3 codifica '3 o más'",
+      "accion": "Conservar como ordinal 0-3 (3 = 3+); derivar reprobaciones_3mas en el dataset",
+      "afectados": 30,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-08",
+      "fuente": "F1 UCI",
+      "descripcion": "Nota 0 interpretada como 'no evaluado' (G1=1, G2=20, G3=53)",
+      "accion": "Marcar no_evaluado; excluir de medias; G3=0 cuenta como reprobación en en_riesgo",
+      "afectados": 74,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-09",
+      "fuente": "F1 UCI",
+      "descripcion": "Faltas = 0 en matrículas con G3 no evaluado (53 con G3=0, 53 con 0 faltas): registro de asistencia no confiable",
+      "accion": "Marcar faltas_confiable = false",
+      "afectados": 53,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-10",
+      "fuente": "F1 UCI",
+      "descripcion": "Faltas extremas (> Q3 + 3·RIC por asignatura)",
+      "accion": "Conservar (valores plausibles) y marcar; log1p en modelos",
+      "afectados": 8,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-14",
+      "fuente": "F1 UCI",
+      "descripcion": "Despivotado 1FN: G1, G2, G3 -> filas (matrícula × período)",
+      "accion": "Transformar",
+      "afectados": 3132,
+      "antes": 1044,
+      "despues": 3132,
+      "implementacion": "src/transform.py::normalizar"
+    },
+    {
+      "id": "R-15",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Campos obligatorios ausentes (evento_id, estudiante_id, asignatura, fecha, tipo)",
+      "accion": "Cuarentena",
+      "afectados": 96,
+      "antes": 48892,
+      "despues": 48796,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-16",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Eventos duplicados (mismo evento_id)",
+      "accion": "Eliminar, conservar la primera aparición",
+      "afectados": 959,
+      "antes": 48796,
+      "despues": 47837,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-17",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Integridad referencial: (estudiante_id, asignatura) sin matrícula en PostgreSQL",
+      "accion": "Cuarentena",
+      "afectados": 96,
+      "antes": 47837,
+      "despues": 47741,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-18",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Fecha fuera del calendario lectivo 2005–2006",
+      "accion": "Cuarentena",
+      "afectados": 144,
+      "antes": 47741,
+      "despues": 47597,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-19",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Asignación de período (P1/P2/P3) por fecha del evento",
+      "accion": "Derivar campo periodo",
+      "afectados": 47597,
+      "antes": 47597,
+      "despues": 47597,
+      "implementacion": "src/transform_synthetic.py::periodo_de"
+    },
+    {
+      "id": "R-20",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Tipo de evento no estandarizado (mayúsculas, espacios, inglés)",
+      "accion": "Mapear al catálogo {recurso, tarea, foro, cuestionario}",
+      "afectados": 2397,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-21",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Duración negativa (error de registro)",
+      "accion": "Anular duración (el evento cuenta, no suma minutos)",
+      "afectados": 240,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-22",
+      "fuente": "F2 LMS (sim.)",
+      "descripcion": "Duración > 240 min (sesión no cerrada)",
+      "accion": "Truncar a 240 min",
+      "afectados": 240,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform_synthetic.py::limpiar_eventos"
+    },
+    {
+      "id": "R-23",
+      "fuente": "F3 Tutorías (sim.)",
+      "descripcion": "Tutorías: resultado no estandarizado (28 mapeados) y fecha fuera de calendario o sin matrícula (6 a cuarentena)",
+      "accion": "Mapear resultado; cuarentena",
+      "afectados": 34,
+      "antes": 550,
+      "despues": 544,
+      "implementacion": "src/transform_synthetic.py::limpiar_tutorias"
+    },
+    {
+      "id": "R-24",
+      "fuente": "F3 Alertas (sim.)",
+      "descripcion": "Coherencia temporal: actualizado_en >= última fecha del historial/notas (corregidas 34); historial ordenado (0); estado = último del historial (0)",
+      "accion": "Corregir y registrar",
+      "afectados": 34,
+      "antes": 282,
+      "despues": 282,
+      "implementacion": "src/transform_synthetic.py::limpiar_alertas"
+    },
+    {
+      "id": "R-25",
+      "fuente": "F3 Alertas (sim.)",
+      "descripcion": "Texto libre: normalización (minúsculas, tildes, abreviaturas, puntuación) y categorización por léxico ({'academico': 215, 'asistencia': 117, 'conducta': 73, 'familiar': 78, 'motivacion': 92})",
+      "accion": "Derivar texto_normalizado y categoria",
+      "afectados": 575,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/transform_synthetic.py::normalizar_texto / categorizar"
+    },
+    {
+      "id": "R-26",
+      "fuente": "Integración",
+      "descripcion": "Matrículas sin registros simulados tras el LEFT JOIN (sin LMS en P1: 14; sin tutorías: 799; sin alertas: 762)",
+      "accion": "Imputar 0 (ausencia de registro = ausencia de actividad)",
+      "afectados": 1575,
+      "antes": 1044,
+      "despues": 1044,
+      "implementacion": "src/integrate.py::construir"
+    },
+    {
+      "id": "DEF-01",
+      "fuente": "Integración",
+      "descripcion": "Variable objetivo en_riesgo = 1 si G3 < 10 (prevalencia 0.220)",
+      "accion": "Derivar",
+      "afectados": 230,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/integrate.py::construir"
+    },
+    {
+      "id": "L-04",
+      "fuente": "Integración",
+      "descripcion": "Partición train/test (80/20) agrupada por estudiante y estratificada por en_riesgo; test = 212 matrículas",
+      "accion": "Fijar antes de explorar",
+      "afectados": 212,
+      "antes": null,
+      "despues": null,
+      "implementacion": "src/integrate.py::construir"
+    }
+  ],
+  "artefactos": {
+    "data/staging/uci_raw.parquet": {
+      "sha256": "23f22921d8eef22ae0387b5206d701849e3f8de72d874760334dca01fca84794",
+      "bytes": 36308,
+      "filas": 1044
+    },
+    "data/staging/escuela.parquet": {
+      "sha256": "b5ecd44fb880233d16434d7f57df089865a70e7f6dd3b0d578b24598bbde75c5",
+      "bytes": 2513,
+      "filas": 2
+    },
+    "data/staging/asignatura.parquet": {
+      "sha256": "cf33807f2e62abd8c6323fae2d3f64ed9d773be47261b7a3bd6a30f0c5c36bb5",
+      "bytes": 2524,
+      "filas": 2
+    },
+    "data/staging/periodo.parquet": {
+      "sha256": "f6f2c2c224640511845b7e98830313a528f186b764efebfc4624cc26119baabd",
+      "bytes": 5170,
+      "filas": 3
+    },
+    "data/staging/estudiante.parquet": {
+      "sha256": "381622e8300c3d9b1dce4c386b9b049027720b3ec38ba35d35db0f9335d76acf",
+      "bytes": 26184,
+      "filas": 674
+    },
+    "data/staging/matricula.parquet": {
+      "sha256": "49c2414ed61465bd40ef9745f25b352a2971fa5972642c34af19ae4cc9b18fe7",
+      "bytes": 15185,
+      "filas": 1044
+    },
+    "data/staging/calificacion.parquet": {
+      "sha256": "de5255e73e57ac6ea95a1cef759e8006950e9f99f244630c98f820fb2a2c2fe3",
+      "bytes": 11877,
+      "filas": 3132
+    },
+    "data/raw/synthetic/lms_eventos.jsonl": {
+      "sha256": "e25fa24afe7245a3fdd673f73cf100c00f15120f1e7ef3cb701a86e9be87c9b3",
+      "bytes": 7150615,
+      "filas": 48892
+    },
+    "data/raw/synthetic/tutorias.jsonl": {
+      "sha256": "7cfdb07ee8eb883b58348fd7ae63bb3b144fc19674c083ebad5eb50e663940e4",
+      "bytes": 111893,
+      "filas": 550
+    },
+    "data/raw/synthetic/alertas.json": {
+      "sha256": "63ecb70f8b24141fe31652188f5366939253e2339d6ec4e43268e308ceb6275a",
+      "bytes": 241168,
+      "filas": 282
+    },
+    "data/raw/synthetic/_verdad_generador.json": {
+      "sha256": "1791c3920dfe643858cef2519f3e2fb009c4800c639f7fecfb90e09fc04d0de1",
+      "bytes": 18218,
+      "filas": null
+    },
+    "data/staging/sim_eventos_limpios.parquet": {
+      "sha256": "37cb8336c96533fe8d11f31135c663aa3fd7997f24e591763c1cb2731fe39550",
+      "bytes": 830483,
+      "filas": null
+    },
+    "data/staging/sim_seguimiento_docs.json": {
+      "sha256": "4197410055b27d84a51c81fab0ac5d7e71ee650b83abc7dfff0b2578fab286be",
+      "bytes": 7104898,
+      "filas": null
+    },
+    "data/staging/sim_alertas_docs.json": {
+      "sha256": "4024c5e9769b4ac0cded63a254e805440280176ae5efa22f0409bf6de4823189",
+      "bytes": 321614,
+      "filas": null
+    },
+    "data/staging/sim_cuarentena.json": {
+      "sha256": "87d6a449000bcafafab2ce3c1bb76391966fc8576cd66bfb54d797f7bea2cfb2",
+      "bytes": 65760,
+      "filas": null
+    },
+    "data/processed/dataset_analitico.parquet": {
+      "sha256": "106adab68260eb3ce5e4ed1f70ab9f3bde0e61f20324cf53189a51c25de420f9",
+      "bytes": 72485,
+      "filas": 1044
+    },
+    "data/processed/dataset_analitico.csv": {
+      "sha256": "e7617c69757cd2481677a1826a734aee514ab8434e271fe7229b670bbaed9584",
+      "bytes": 253745,
+      "filas": 1044
+    },
+    "data/processed/diccionario_datos.csv": {
+      "sha256": "e4859b554b4965e494ff1e4d809278dda5bdfed89cd6abda880a07dc4386e255",
+      "bytes": 6254,
+      "filas": 58
+    }
+  },
+  "inicio": "2026-09-26T14:07:25",
+  "fin": "2026-09-26T14:08:51"
+}
