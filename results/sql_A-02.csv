@@ -1,0 +1,5 @@
+escuela,asignatura,n_matriculas,n_reprobados,tasa_reprobacion,n_no_evaluados
+MS,MAT,46,17,0.3696,4
+GP,MAT,349,113,0.3238,34
+MS,POR,226,68,0.3009,14
+GP,POR,423,32,0.0757,1

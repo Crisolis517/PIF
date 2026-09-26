@@ -1,0 +1,5 @@
+escenario,eventos_anuales,memoria_gb,t_agregacion_estimado_s,cabe_en_un_nodo_8gb
+Caso actual (UCI),47597.0,0.0009043451380000001,0.005347045749999978,True
+Red de 100 centros (100 000 est. × 10 asignaturas),45590996.16858238,0.8662309750957855,5.121691331417604,True
+Red nacional (1 000 000 est. × 10 asignaturas),455909961.6858238,8.662309750957855,51.21691331417603,False
+Red nacional con clickstream (×20 eventos),9118199233.716476,173.2461950191571,1024.3382662835209,False

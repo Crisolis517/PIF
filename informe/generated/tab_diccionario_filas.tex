@@ -1,0 +1,58 @@
+\texttt{estudiante\_id} & int32 & 1–674 & F1 real & Identificador seudonimizado del estudiante \\
+\texttt{asignatura} & category & MAT, POR & F1 real & Asignatura de la matrícula \\
+\texttt{escuela} & category & GP, MS & F1 real & Centro educativo \\
+\texttt{sexo} & category & F, M & F1 real & Sexo declarado \\
+\texttt{edad} & int8 & 15–22 & F1 real & Edad en años \\
+\texttt{zona} & category & Urbana, Rural & F1 real & Tipo de domicilio \\
+\texttt{tamano\_familia} & category & $\leq$3, >3 & F1 real & Tamaño del hogar \\
+\texttt{estado\_padres} & category & Juntos, Separados & F1 real & Convivencia de los padres \\
+\texttt{educ\_madre} & int8 & 0–4 & F1 real & Nivel educativo de la madre \\
+\texttt{educ\_padre} & int8 & 0–4 & F1 real & Nivel educativo del padre \\
+\texttt{trabajo\_madre} & category & 5 niveles & F1 real & Ocupación de la madre \\
+\texttt{trabajo\_padre} & category & 5 niveles & F1 real & Ocupación del padre \\
+\texttt{motivo\_eleccion} & category & 4 niveles & F1 real & Motivo de elección del centro \\
+\texttt{tutor\_legal} & category & madre, padre, otro & F1 real & Tutor legal \\
+\texttt{tiempo\_viaje} & int8 & 1–4 & F1 real & Tiempo de traslado (ordinal) \\
+\texttt{tiempo\_estudio} & int8 & 1–4 & F1 real & Estudio semanal: 1 <2 h, 2 2–5 h, 3 5–10 h, 4 >10 h \\
+\texttt{apoyo\_escolar} & bool & V/F & F1 real & Refuerzo educativo del centro \\
+\texttt{apoyo\_familiar} & bool & V/F & F1 real & Apoyo educativo familiar \\
+\texttt{actividades} & bool & V/F & F1 real & Actividades extracurriculares \\
+\texttt{guarderia} & bool & V/F & F1 real & Asistió a educación infantil \\
+\texttt{desea\_superior} & bool & V/F & F1 real & Aspira a educación superior \\
+\texttt{internet} & bool & V/F & F1 real & Internet en el hogar \\
+\texttt{relacion\_romantica} & bool & V/F & F1 real & Relación sentimental \\
+\texttt{relacion\_familiar} & int8 & 1–5 & F1 real & Calidad de relaciones familiares \\
+\texttt{tiempo\_libre} & int8 & 1–5 & F1 real & Tiempo libre \\
+\texttt{salidas} & int8 & 1–5 & F1 real & Salidas con amigos \\
+\texttt{alcohol\_semana} & int8 & 1–5 & F1 real & Consumo de alcohol entre semana \\
+\texttt{alcohol\_finde} & int8 & 1–5 & F1 real & Consumo de alcohol en fin de semana \\
+\texttt{salud} & int8 & 1–5 & F1 real & Estado de salud \\
+\texttt{reprobaciones\_previas} & int8 & 0–3 (3 = 3+) & F1 real & Reprobaciones previas en la asignatura \\
+\texttt{reprobaciones\_3mas} & bool & V/F & Derivada & Marca de valor truncado (3 o más) \\
+\texttt{clases\_pagadas} & bool & V/F & F1 real & Clases particulares pagadas en la asignatura \\
+\texttt{faltas} & int16 & 0–75 & F1 real & Faltas ANUALES (no disponibles al corte P1; ver L-02) \\
+\texttt{faltas\_confiable} & bool & V/F & Derivada & Falso si G3 no evaluado y 0 faltas \\
+\texttt{faltas\_atipicas} & bool & V/F & Derivada & Faltas extremas (se conservan) \\
+\texttt{nota\_p1} & int8 & 0–20 & F1 real & Nota del 1.er período \\
+\texttt{nota\_p2} & int8 & 0–20 & F1 real & Nota del 2.º período \\
+\texttt{nota\_p3} & int8 & 0–20 & F1 real & Nota final (solo para construir la variable objetivo) \\
+\texttt{no\_evaluado\_p1} & bool & V/F & Derivada & Nota 0 en P1 = no evaluado \\
+\texttt{no\_evaluado\_p2} & bool & V/F & Derivada & Nota 0 en P2 = no evaluado \\
+\texttt{no\_evaluado\_p3} & bool & V/F & Derivada & Nota 0 en P3 = no evaluado / abandono \\
+\texttt{en\_ambas\_asignaturas} & bool & V/F & Derivada & El estudiante cursa MAT y POR \\
+\texttt{en\_riesgo} & int8 & 0/1 & Derivada (objetivo) & 1 = reprueba la asignatura (G3 < 10, incluye no evaluados) \\
+\texttt{rendimiento\_sobre\_promedio} & boolean & V/F/NA & Derivada & Solo evaluados en P3; NA si no evaluado \\
+\texttt{sim\_lms\_eventos\_p1} & int32 & $\geq$ 0 & F2 SIMULADO & Eventos LMS en P1 \\
+\texttt{sim\_lms\_minutos\_p1} & int32 & $\geq$ 0 & F2 SIMULADO & Minutos LMS en P1 \\
+\texttt{sim\_lms\_dias\_activos\_p1} & int16 & $\geq$ 0 & F2 SIMULADO & Días distintos con actividad en P1 \\
+\texttt{sim\_lms\_tareas\_revisadas\_p1} & int16 & $\geq$ 0 & F2 SIMULADO & Tareas revisadas en P1 \\
+\texttt{sim\_lms\_eventos\_total} & int32 & $\geq$ 0 & F2 SIMULADO & Eventos LMS del curso (descriptivo; no temprano) \\
+\texttt{sim\_lms\_minutos\_total} & int32 & $\geq$ 0 & F2 SIMULADO & Minutos LMS del curso (descriptivo; no temprano) \\
+\texttt{sim\_n\_tutorias} & int16 & $\geq$ 0 & F3 SIMULADO & Tutorías recibidas (P2–P3; posteriores al corte) \\
+\texttt{sim\_n\_tutorias\_completadas} & int16 & $\geq$ 0 & F3 SIMULADO & Tutorías completadas \\
+\texttt{sim\_n\_alertas} & int16 & $\geq$ 0 & F3 SIMULADO & Alertas registradas (P2) \\
+\texttt{sim\_nivel\_alerta\_max} & int8 & 0–3 & F3 SIMULADO & 0 sin alerta, 1 bajo, 2 medio, 3 alto \\
+\texttt{sim\_alerta\_cerrada} & bool & V/F & F3 SIMULADO & Alguna alerta llegó a 'cerrada' \\
+\texttt{particion} & category & train, test & Derivada & Partición fijada antes del análisis, agrupada por estudiante \\
+\texttt{archivo\_origen} & category & student-mat.csv, student-por.csv & Linaje & Archivo UCI de origen \\
+\texttt{fila\_origen} & int32 & $\geq$ 2 & Linaje & Línea del CSV de origen \\

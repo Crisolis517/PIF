@@ -1,0 +1,12 @@
+control,valor,esperado,ok,descripcion
+I-01 estudiantes,674,674,True,I-01 Conteo de estudiantes
+I-02 matriculas,1044,1044,True,I-02 Conteo de matrículas (= filas UCI 395 + 649)
+I-03 calificaciones,3132,3132,True,I-03 Conteo de calificaciones (= matrículas x 3 períodos)
+I-04 matriculas_sin_3_notas,0,0,True,I-04 Matrículas sin exactamente 3 calificaciones
+I-05 estudiantes_sin_matricula,0,0,True,I-05 Estudiantes huérfanos (sin matrícula)
+I-06 matriculas_huerfanas,0,0,True,I-06 Matrículas con estudiante inexistente (FK anti-join)
+I-07 estudiantes_en_ambas,370,370,True,I-07 Estudiantes con matrícula en ambas asignaturas (pares R-12)
+I-08 notas_fuera_dominio,0,0,True,I-08 Notas fuera de dominio 0–20
+I-09 calificaciones_no_evaluadas,74,74,True,I-09 Calificaciones marcadas no evaluadas (R-08)
+I-10 filas_origen_duplicadas,0,0,True,I-10 Trazabilidad: filas de origen únicas por archivo
+I-11 filas_vista_integracion,1044,1044,True,I-11 Vista de integración: una fila por matrícula

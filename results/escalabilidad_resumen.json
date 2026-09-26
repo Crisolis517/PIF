@@ -1,0 +1,9 @@
+{
+  "equipo": "arm64 · 8 núcleos · 8 GB RAM · Darwin",
+  "eventos_por_matricula_anio": 45.59099616858238,
+  "bytes_por_fila": 19.000044918797403,
+  "filas_por_s": 8901550.917158358,
+  "filas_max_nodo_8gb": 140350545.3836291,
+  "mongo_ag01_mediana_s": 0.062228625000003035,
+  "dataset_uci_bytes": 150213
+}

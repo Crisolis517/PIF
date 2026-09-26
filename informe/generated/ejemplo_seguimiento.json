@@ -1,0 +1,26 @@
+{
+ "estudiante_id": 1,
+ "periodo": "P1",
+ "periodo_inicio": "2005-09-15T00:00:00",
+ "periodo_fin": "2005-12-16T23:59:59",
+ "interacciones_lms": [
+  {
+   "evento_id": "EV-0000003",
+   "asignatura": "MAT",
+   "fecha": "2005-09-19T16:24:00",
+   "tipo": "tarea",
+   "duracion_min": 17,
+   "revisada": true
+  },
+  {
+   "evento_id": "EV-0000050",
+   "asignatura": "POR",
+   "fecha": "2005-09-22T21:36:00",
+   "tipo": "foro",
+   "duracion_min": 32
+  }
+ ],
+ "tutorias": [],
+ "es_simulado": true,
+ "fuente": "generate_synthetic v1.0 (seed=42)"
+}

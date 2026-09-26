@@ -1,0 +1,12 @@
+HashAggregate  (cost=117.77..117.84 rows=6 width=39)
+  Group Key: a.codigo, p.codigo
+  ->  Hash Join  (cost=2.11..94.83 rows=3058 width=9)
+        Hash Cond: (c.periodo_id = p.periodo_id)
+        ->  Hash Join  (cost=1.04..74.40 rows=3058 width=8)
+              Hash Cond: (c.asignatura_id = a.asignatura_id)
+              ->  Seq Scan on calificacion c  (cost=0.00..48.32 rows=3058 width=6)
+                    Filter: (NOT no_evaluado)
+              ->  Hash  (cost=1.02..1.02 rows=2 width=6)
+                    ->  Seq Scan on asignatura a  (cost=0.00..1.02 rows=2 width=6)
+        ->  Hash  (cost=1.03..1.03 rows=3 width=5)
+              ->  Seq Scan on periodo p  (cost=0.00..1.03 rows=3 width=5)

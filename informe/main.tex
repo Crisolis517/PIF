@@ -1,0 +1,1254 @@
+\documentclass[11pt,a4paper]{article}
+% =============================================================================
+% Informe técnico final — Proyecto Integrador (M1721) — Grupo 1
+% Compilar:  tectonic main.tex   (o xelatex main.tex dos veces)
+% Todas las cifras provienen de generated/valores.tex y generated/tab_*.tex,
+% producidos por src/report_tables.py a partir de salidas ejecutadas.
+% =============================================================================
+\usepackage{fontspec}
+\usepackage[spanish,es-tabla,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage[margin=2.3cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{graphicx,float}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage[font=small,labelfont=bf,skip=4pt]{caption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{rotating}
+\usepackage{xurl}
+\AtBeginDocument{\renewcommand{\_}{\textunderscore\allowbreak}}
+\usepackage{adjustbox}
+\newcommand{\ajustar}[1]{\adjustbox{max width=\linewidth}{\input{#1}}}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,backgrounds,calc}
+\usepackage[hidelinks]{hyperref}
+
+\input{generated/valores.tex}
+
+% ---- Enlace al repositorio ----
+\newcommand{\repourl}{\url{https://github.com/Crisolis517/PIF}}
+\newcommand{\repozip}{\texttt{proyecto-integrador.zip}}
+
+\definecolor{azul}{HTML}{2a78d6}
+\definecolor{naranja}{HTML}{eb6834}
+\definecolor{aqua}{HTML}{1baf7a}
+\definecolor{tinta}{HTML}{52514e}
+\definecolor{fondo}{HTML}{f5f4f0}
+\definecolor{fondoazul}{HTML}{e8f1fc}
+\definecolor{fondonar}{HTML}{fdeee7}
+
+\setlength{\parskip}{0.45em}
+\setlength{\emergencystretch}{3em}
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.12}
+\setlist{itemsep=0.15em,topsep=0.3em}
+\titleformat{\section}{\large\bfseries\color{black}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.5em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Proyecto Integrador Final — M1721}
+\fancyhead[R]{\small Grupo 1}
+\fancyfoot[C]{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\lstdefinestyle{codigo}{basicstyle=\ttfamily\scriptsize, backgroundcolor=\color{fondo},
+  frame=single, rulecolor=\color{gray!40}, breaklines=true, columns=fullflexible,
+  keepspaces=true, showstringspaces=false, extendedchars=true, tabsize=2,
+  commentstyle=\color{tinta}\itshape, keywordstyle=\color{azul}\bfseries,
+  captionpos=t, aboveskip=0.6em, belowskip=0.4em}
+\lstset{style=codigo}
+\renewcommand{\lstlistingname}{Listado}
+
+\newcommand{\SIM}{\textsuperscript{\textsc{sim}}}
+\newcommand{\fuente}[1]{\par\vspace{2pt}{\footnotesize\textit{Fuente:} #1}}
+
+\begin{document}
+
+% =============================================================================
+% PORTADA
+% =============================================================================
+\begin{titlepage}
+\centering
+\vspace*{1.2cm}
+{\large\bfseries ESCUELA SUPERIOR POLITÉCNICA DE CHIMBORAZO\par}
+\vspace{0.3cm}
+{\normalsize Maestría en Estadística con mención en Ciencia de Datos e Inteligencia Artificial\par}
+\vspace{2.4cm}
+{\Large\bfseries PROYECTO INTEGRADOR FINAL\par}
+\vspace{0.4cm}
+{\large Informe técnico\par}
+\vspace{1.2cm}
+{\Large\bfseries Pipeline híbrido SQL + NoSQL para la detección temprana\\[2pt] del riesgo de reprobación en educación secundaria\par}
+\vspace{2.2cm}
+\begin{tabular}{rl}
+\textbf{Módulo:} & Bases de Datos para Datos Estructurados, no Estructurados\\
+ & e Introducción a Big Data para Ciencia de Datos \\
+\textbf{Código:} & M1721 \\
+\textbf{Modalidad:} & Trabajo grupal (Grupo 1) \\
+\textbf{Valor:} & 3,50 puntos \\
+\end{tabular}
+\vspace{2cm}
+
+{\bfseries Autores\par}
+\vspace{0.2cm}
+Alexis Rivera\\ Lissette Adriano\\ Shirley Adriano\\ Cristian Solís\par
+\vfill
+Riobamba, 26 de septiembre de 2026
+\end{titlepage}
+
+% =============================================================================
+% RESUMEN
+% =============================================================================
+\section*{Resumen}
+\addcontentsline{toc}{section}{Resumen}
+Se implementó un pipeline reproducible que integra el registro académico real
+\emph{Student Performance} (UCI; dos centros portugueses, curso 2005--2006) almacenado en PostgreSQL
+en tercera forma normal, con evidencia conductual simulada (interacciones LMS, tutorías y alertas con
+texto libre) almacenada en MongoDB con validación de esquema. Una regla de identidad en dos etapas
+corrigió las cifras del avance: los datos contienen \nEst{} estudiantes, \nMat{} matrículas y
+\nCal{} calificaciones, no 662, 1.028 y 3.084. Se aplicaron 26 reglas de calidad trazables y se construyó un dataset analítico de \nFilasDs{} matrículas con diccionario y linaje. La variable objetivo se definió como reprobación final ($G3<10$;
+prevalencia \prevTot{}). En los datos reales, la reprobación se concentra en Matemáticas
+(\prevMat{}) y, en Portugués, en la escuela Mousinho da Silveira (\tasaPorMs{} frente a \tasaPorGp{}).
+Las reprobaciones previas son el factor de antecedente más fuerte (OR \orReprob{}).
+Un modelo de predicción temprana al cierre del primer período, sin usar $G3$ y con partición
+agrupada por estudiante, alcanzó un AUC-ROC en prueba de \aucALr{} \aucIcALr{} con regresión logística y un recall de \recALr{}. El análisis de sensibilidad mostró que las variables simuladas no añaden
+información ($\Delta$AUC = \dAsimALr{}), como exige su proceso generador.
+Un benchmark de \benchMaxFilas{} eventos en un nodo justifica no usar Spark.
+Se recomienda institucionalizar una alerta al cierre del primer período y validar el modelo con
+datos LMS reales.
+
+\noindent\textbf{Palabras clave:} ingeniería de datos, PostgreSQL, MongoDB, ETL, calidad de datos,
+predicción temprana, fuga de información, reproducibilidad.
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+% =============================================================================
+\section{Introducción}
+% =============================================================================
+\subsection{Contexto y problema}
+El rendimiento en educación secundaria depende de factores que las instituciones registran de forma
+fragmentada: calificaciones y reprobaciones previas en el sistema académico, asistencia en archivos
+planos, actividad digital en los registros de la plataforma virtual de aprendizaje (LMS) y
+acompañamiento en los registros manuales del departamento de orientación. Esta fragmentación impide
+identificar a tiempo a los estudiantes con riesgo de reprobar, cuando aún existe margen de
+intervención. El proyecto aborda ese problema desde la ingeniería de datos: integrar fuentes de
+estructura heterogénea en un almacenamiento híbrido y consolidarlas en un dataset analítico
+trazable que permita estimar el riesgo con la información disponible al cierre del primer período.
+
+\subsection{Preguntas de análisis y decisión que se apoya}
+La decisión que se apoya es \textbf{a quién derivar a tutoría al cierre del primer período}. Se
+mantienen las preguntas del avance:
+\begin{itemize}
+\item \textbf{P1.} ¿Cómo evoluciona la nota media de cada asignatura en los tres períodos y qué
+combinaciones de centro y asignatura concentran una tasa de reprobación que exija intervención?
+\item \textbf{P2.} ¿Qué condiciones (tiempo de estudio, faltas, reprobaciones previas, refuerzo,
+involucramiento en el LMS) distinguen a quienes rinden por encima del promedio de quienes quedan por debajo?
+\item \textbf{Pregunta principal.} ¿Qué estudiantes combinan bajo involucramiento en el LMS, alta
+inasistencia y reprobaciones previas, qué tutorías y alertas tienen asociadas y con qué exactitud
+puede predecirse tempranamente su riesgo de reprobación?
+\end{itemize}
+
+\subsection{Objetivos}
+\textbf{Objetivo general.} Diseñar, implementar y documentar un pipeline de datos multimodal y
+reproducible que integre registros académicos estructurados con evidencia semiestructurada y no
+estructurada de acompañamiento, para construir un dataset analítico que permita estimar
+tempranamente el riesgo de reprobación y orientar intervenciones.
+
+\textbf{Objetivos específicos.}
+\begin{enumerate}[label=OE\arabic*.]
+\item Modelar el registro académico en PostgreSQL en 3FN con restricciones de integridad verificables.
+\item Modelar la evidencia conductual en MongoDB con validación de esquema e índices, cubriendo toda la población.
+\item Implementar un ETL con reglas de calidad numeradas, trazables y con conteo de registros afectados.
+\item Integrar ambas fuentes en un dataset analítico con unidad de análisis inequívoca, diccionario y linaje.
+\item Responder P1, P2 y la pregunta principal con pruebas estadísticas, tamaños de efecto e intervalos de confianza.
+\item Estimar un modelo de predicción temprana sin fuga de información y evaluar su sensibilidad a las variables simuladas.
+\item Justificar con mediciones la decisión sobre procesamiento distribuido.
+\end{enumerate}
+
+\textbf{Beneficiarios.} Coordinación académica y departamento de orientación, que reciben un
+criterio de derivación temprana. También investigadores en analítica educativa, que reciben un
+pipeline reproducible y reutilizable.
+
+\subsection{Evolución respecto al avance y correspondencia con la rúbrica}
+El informe es la evolución directa del avance: mismo problema, mismas fuentes, misma arquitectura
+base. Una revisión crítica del avance identificó dieciséis debilidades (Tabla~\ref{tab:diagnostico}).
+Todas se resolvieron y cada decisión se documenta en la sección indicada. La
+Tabla~\ref{tab:rubrica} relaciona cada sección con el criterio de la rúbrica que atiende.
+
+\begin{table}[H]
+\centering\small
+\caption{Correspondencia entre las secciones del informe y los criterios de la rúbrica.}\label{tab:rubrica}
+\begin{tabular}{p{4.6cm}p{6.6cm}r}
+\toprule
+Criterio de la rúbrica & Secciones y evidencias & Peso \\
+\midrule
+Arquitectura y diseño & §1 (problema), §3 (arquitectura), §7 (escalabilidad) & 20\,\% \\
+Almacenamiento e integración & §2 (fuentes), §4 (SQL, MongoDB, integración) & 20\,\% \\
+ETL y calidad de datos & §5 (reglas R-01…R-26, linaje), §6 (ETL, logs, reproducibilidad) & 25\,\% \\
+Resultados e interpretación & §8 (P1, P2, pregunta principal, modelo), §9 (conclusiones) & 20\,\% \\
+Documentación y reproducibilidad & §6.5, §10 (repositorio), anexos (DDL, diccionario, linaje) & 15\,\% \\
+\bottomrule
+\end{tabular}
+\fuente{elaboración propia a partir de la guía y rúbrica oficial.}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Diagnóstico del avance: debilidades detectadas, impacto y decisión adoptada.}\label{tab:diagnostico}
+\begin{tabular}{p{0.3cm}p{4.0cm}p{3.4cm}p{5.9cm}p{0.5cm}}
+\toprule
+\# & Debilidad del avance & Por qué afecta & Decisión en el informe final & §\\
+\midrule
+1 & \texttt{en\_riesgo} sin definición operativa & Resultados no interpretables & $G3<10$ (umbral oficial portugués); $G3=0$ cuenta como reprobación & 5.4 \\
+2 & \texttt{promedio\_general} incluía $G3$ (fuga) & Predicción circular & Escenarios de corte C, A (P1) y B (P2); $G3$ nunca es predictor (L-01) & 5.5 \\
+3 & LMS y tutorías “correlacionados con el riesgo real” & Hallazgos por construcción & Generador explícito que no usa notas; prefijo \texttt{sim\_}; sensibilidad y contrafactual & \ref{sec:sens} \\
+4 & 45 documentos para 662 estudiantes & Integración no representativa & Cobertura del 100\,\%: \nDocSeg{} documentos (\nEstCub{} estudiantes $\times$ 3 períodos) & 4.2 \\
+5 & Unidad “estudiante–período” ambigua; etiqueta “2026-1” & Trazabilidad & Fila = matrícula; P1$\leftrightarrow$G1, P2$\leftrightarrow$G2, P3$\leftrightarrow$G3 con calendario 2005--06 & 4.3 \\
+6 & \texttt{actualizado\_en} anterior a la tutoría & Incoherencia temporal & Validador \texttt{\$expr} + regla R-24 (\reglaRDosCuatro{} corregidas) & 4.2 \\
+7 & “382 estudiantes compartidos” & Conteo erróneo & 382 son filas de un \emph{merge} con productos cruzados; los estudiantes compartidos son \nPares{} & 5.2 \\
+8 & 1.044 filas vs. 1.028 matrículas & Pérdida de datos reales & Las 16 filas perdidas eran estudiantes distintos con igual clave: se recuperan (R-11) & 5.2 \\
+9 & $G3=0$, \texttt{failures} truncado, 0 notas con 0 faltas & Sesgo en medias y asociaciones & R-07, R-08, R-09 con conteos e impacto en N & 5.3 \\
+10 & Texto libre mínimo & Componente no estructurado débil & Normalización, conteo de términos, categorización e índice de texto & \ref{sec:texto} \\
+11 & Escalabilidad sin cifras & Arquitectura no justificada & Benchmark medido hasta $\times$\benchMaxFactor{} y escenarios de proyección & 7 \\
+12 & \texttt{absences} es anual (no disponible en P1) & Fuga temporal & Excluida del modelo temprano (L-02); solo sensibilidad & 5.5 \\
+13 & Mismo estudiante en entrenamiento y prueba & Fuga por identidad & Partición y validación cruzada agrupadas por estudiante (L-04) & 5.5 \\
+14 & 370 estudiantes con dos matrículas & Pseudorreplicación en pruebas & Pruebas estratificadas por asignatura; errores agrupados por estudiante & 8 \\
+15 & Nombres de tutores en el JSON de ejemplo & Privacidad & Códigos seudónimos (\texttt{TUT-xx}, \texttt{ORI-xx}) & 2 \\
+16 & Notas copiadas de SQL dentro de Mongo & Doble fuente de verdad & SQL es la única fuente académica; Mongo solo guarda evidencia conductual & 4.2 \\
+\bottomrule
+\end{tabular}
+\fuente{elaboración propia; revisión del avance entregado por el Grupo 1.}
+\end{table}
+
+% =============================================================================
+\section{Fuentes de datos}
+% =============================================================================
+La Tabla~\ref{tab:fuentes} caracteriza las tres fuentes. Solo F1 es real. F2 y F3 son simuladas con un
+proceso generador explícito (§\ref{sec:gen}), porque no se tuvo acceso a registros institucionales de LMS ni
+de orientación. Se declaran como \textbf{demostración del pipeline}, no como evidencia sustantiva.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Inventario y caracterización de las fuentes de datos.}\label{tab:fuentes}
+\begin{tabular}{p{2.2cm}p{3.9cm}p{3.9cm}p{4.2cm}}
+\toprule
+ & F1 — Registro académico & F2 — Interacciones LMS\SIM & F3 — Tutorías y alertas\SIM \\
+\midrule
+Origen & UCI ML Repository (Cortez, 2008), descarga automática y SHA-256 verificado & \texttt{generate\_synthetic.py}, semilla 42 & \texttt{generate\_synthetic.py}, semilla 42 \\
+Naturaleza & Real (encuesta y registro escolar) & Simulada & Simulada \\
+Tipo y formato & Estructurado; CSV con separador \texttt{;}, 33 columnas & Semiestructurado; JSON Lines (log plano) & Semiestructurado y texto libre; JSON \\
+Granularidad & Estudiante $\times$ asignatura (fila); notas por período & Evento (clic/sesión) & Sesión de tutoría; alerta con historial y notas \\
+Volumen & 395 + 649 filas (\benchUciKb{} kB) & \nEvCrudos{} eventos crudos & \nTutGen{} tutorías; \nAleGen{} alertas; \nNotasGen{} notas \\
+Almacén & PostgreSQL (esquema \texttt{academico}) & MongoDB (\texttt{seguimiento\_riesgo}) & MongoDB (\texttt{seguimiento\_riesgo}, \texttt{alertas\_riesgo}) \\
+Permisos & CC BY 4.0; uso académico con cita & Sin restricciones (sintético) & Sin restricciones (sintético) \\
+Riesgos de calidad & Identidad sin ID; notas 0; \texttt{failures} truncado; faltas anuales & Duplicados, tipos no estándar, duraciones inválidas, fechas fuera de calendario & Incoherencia temporal, categorías no estándar, texto con ruido \\
+Seguridad y privacidad & Datos anonimizados; ID seudónimo interno & Sin datos personales & Tutores/orientadores con código; texto sin nombres \\
+\bottomrule
+\end{tabular}
+\fuente{elaboración propia; documentación UCI (\texttt{student.txt}) y salidas de \texttt{extract.py} y \texttt{generate\_synthetic.py}.}
+\end{table}
+
+\textbf{Población de referencia.} Estudiantes de los centros Gabriel Pereira (GP) y Mousinho da
+Silveira (MS), Portugal, curso 2005--2006, en Matemáticas y Lengua Portuguesa. Las conclusiones
+sustantivas se refieren a esa población y no se extrapolan a otros sistemas educativos.
+
+\textbf{Controles de seguridad adoptados.} (i) Credenciales fuera del código (\texttt{.env}, excluido
+del repositorio; \texttt{.env.example} sin secretos). (ii) Rol \texttt{analista\_lectura} con privilegio
+mínimo (solo \texttt{SELECT}). (iii) Identificadores seudónimos. (iv) Separación de los datos simulados
+mediante el prefijo \texttt{sim\_} y el campo \texttt{es\_simulado: true}, exigido por el validador.
+
+% =============================================================================
+\section{Arquitectura de la solución}
+% =============================================================================
+La Figura~\ref{fig:arquitectura} muestra el pipeline completo, desde la adquisición hasta el
+consumo. Un único orquestador (\texttt{run\_pipeline.py}) ejecuta las etapas en orden y registra en
+\texttt{logs/} los conteos, las reglas aplicadas y los checksums de los artefactos.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+  font=\sffamily\scriptsize, node distance=4mm and 6mm,
+  caja/.style={draw=#1, fill=#1!8, rounded corners=2pt, align=center, minimum height=10mm, text width=27mm, line width=0.6pt},
+  caja/.default=azul,
+  flecha/.style={-{Stealth[length=2mm]}, line width=0.6pt, draw=tinta},
+  capa/.style={font=\sffamily\scriptsize\bfseries, text=tinta}]
+% Capas
+\node[capa] (l1) at (0,1.1) {1. Fuentes};
+\node[capa] at (3.4,1.1) {2. Ingesta};
+\node[capa] at (6.8,1.1) {3. Transformación};
+\node[capa] at (10.2,1.1) {4. Almacenamiento};
+\node[capa] at (13.6,1.1) {5. Integración};
+\node[capa] at (17.0,1.1) {6. Consumo};
+% Fuentes
+\node[caja=azul] (f1) at (0,0) {\textbf{F1} Registro UCI\\ CSV \texttt{;} (real)\\ 1\,044 filas};
+\node[caja=naranja] (f2) at (0,-1.6) {\textbf{F2} Eventos LMS\\ JSON Lines (simulado)};
+\node[caja=naranja] (f3) at (0,-3.2) {\textbf{F3} Tutorías y alertas\\ JSON + texto (simulado)};
+% Ingesta
+\node[caja=gray] (ex) at (3.4,0) {\texttt{extract.py}\\ descarga, SHA-256,\\ esquema R-01};
+\node[caja=gray] (gen) at (3.4,-2.4) {\texttt{generate\_}\\\texttt{synthetic.py}\\ semilla 42, defectos inyectados};
+% Transform
+\node[caja=gray] (tr) at (6.8,0) {\texttt{transform.py}\\ R-02…R-14\\ identidad + 3FN};
+\node[caja=gray] (ts) at (6.8,-2.4) {\texttt{transform\_}\\\texttt{synthetic.py}\\ R-15…R-25, cuarentena};
+% Storage
+\node[caja=azul] (pg) at (10.2,0) {\textbf{PostgreSQL}\\ esquema \texttt{academico}\\ 6 tablas 3FN, vista, rol};
+\node[caja=naranja] (mg) at (10.2,-2.4) {\textbf{MongoDB}\\ \texttt{seguimiento\_riesgo}\\ \texttt{alertas\_riesgo}\\ validadores + índices};
+% Integrate
+\node[caja=aqua] (ig) at (13.6,-1.2) {\texttt{integrate.py}\\ vista SQL + AG-01/02/03\\ LEFT JOIN (R-26), L-04};
+\node[caja=aqua] (ds) at (13.6,-3.3) {\textbf{Dataset analítico}\\ Parquet + CSV\\ diccionario + linaje};
+% Consumo
+\node[caja=gray] (an) at (17.0,0) {\texttt{analysis.py}\\ P1, P2, principal,\\ modelos, sensibilidad};
+\node[caja=gray] (nb) at (17.0,-1.6) {Notebook ejecutado\\ evidencias en vivo};
+\node[caja=gray] (inf) at (17.0,-3.2) {Informe PDF\\ \texttt{report\_tables.py}\\ (cifras generadas)};
+% Flechas
+\draw[flecha] (f1) -- (ex);
+\draw[flecha] (f1.south east) to[out=-30,in=180] (gen.west);
+\draw[flecha] (gen) -- (ts);
+\draw[flecha] (f2) -- ($(gen.west)+(0,0.25)$);
+\draw[flecha] (f3) -- ($(gen.west)+(0,-0.25)$);
+\draw[flecha] (ex) -- (tr);
+\draw[flecha] (tr) -- (pg);
+\draw[flecha] (ts) -- (mg);
+\draw[flecha] (tr.south) -- node[right,font=\sffamily\tiny,text=tinta]{IDs, matrículas} (ts.north);
+\draw[flecha] (pg.east) -- (ig.north west);
+\draw[flecha] (mg.east) -- (ig.south west);
+\draw[flecha] (ig) -- (ds);
+\draw[flecha] (ds.east) -- (an.south west);
+\draw[flecha] (ds.east) -- (nb.west);
+\draw[flecha] (an) -- (inf.north);
+% Transversal
+\node[draw=tinta, dashed, rounded corners, fit=(l1)(inf)(f3), inner sep=3mm] (marco) {};
+\node[font=\sffamily\scriptsize, text=tinta, anchor=north] at (marco.south) {\texttt{run\_pipeline.py} (orquestador) · \texttt{tracking.py}: conteos por etapa, reglas R-xx, SHA-256 · \texttt{tests/} (pytest) · \texttt{docker-compose.yml}};
+\end{tikzpicture}}
+\caption{Arquitectura del pipeline, de la adquisición al consumo. Azul: dato real; naranja: dato simulado; verde: integración.}\label{fig:arquitectura}
+\fuente{elaboración propia.}
+\end{figure}
+
+\vspace{0.9em}
+La Tabla~\ref{tab:componentes} justifica cada componente y la alternativa descartada. El criterio
+rector es la \emph{adecuación al problema}: se usa cada tecnología solo donde su modelo de datos
+resuelve una necesidad concreta.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Justificación de componentes tecnológicos y alternativas descartadas.}\label{tab:componentes}
+\begin{tabular}{p{2.4cm}p{6.2cm}p{5.8cm}}
+\toprule
+Componente & Justificación & Alternativa descartada y motivo \\
+\midrule
+PostgreSQL (16 en Docker; 18 en la ejecución local) & Datos académicos estables y relacionales; necesitan integridad referencial (PK/FK), dominios (\texttt{CHECK}), ACID y consultas con JOIN y agregación. La 3FN evita anomalías de actualización. & Guardar todo en MongoDB: se perderían las garantías de integridad y habría notas duplicadas por estudiante. \\
+MongoDB 8 & Eventos y tutorías de cardinalidad variable (0 a cientos por estudiante), anidados y con esquema evolutivo; texto libre con índice de texto; pipelines \texttt{\$unwind/\$group/\$lookup}. & Tabla de eventos en SQL: viable, pero rígida ante nuevos tipos de evento y sin modelar el documento “estudiante–período”, que es la unidad de consulta del orientador. \\
+Parquet (+ CSV de respaldo) & Formato columnar tipado y comprimido para el consumo analítico; conserva tipos (\texttt{bool}, \texttt{category}, \texttt{Int}). & Solo CSV: pierde tipos y es mayor en disco. \\
+Python (pandas, SQLAlchemy, PyMongo) & Un solo lenguaje para ETL, estadística y ML; funciones con docstrings y pruebas \texttt{pytest}. & Herramientas ETL visuales: difíciles de versionar y reproducir. \\
+scikit-learn / statsmodels & Validación cruzada agrupada, pipelines sin fuga; inferencia (OR, IC) con errores agrupados. & Modelos opacos sin línea base ni calibración. \\
+Spark (no usado) & El volumen medido cabe en un nodo con holgura (§7). & Usarlo añadiría complejidad (JVM, clúster) sin beneficio medible. \\
+\bottomrule
+\end{tabular}
+\fuente{elaboración propia.}
+\end{table}
+
+% =============================================================================
+\section{Almacenamiento e integración}
+% =============================================================================
+\subsection{Modelo relacional (PostgreSQL, 3FN)}
+El registro UCI mezcla atributos del estudiante, de la matrícula y tres notas en una fila. La
+normalización (Figura~\ref{fig:er}) sigue tres pasos. En 1FN, $G1$, $G2$ y $G3$ pasan a filas de
+\texttt{calificacion} con \texttt{periodo\_id}. En 2FN, los atributos que dependen de la asignatura
+(\texttt{failures}, \texttt{paid}, \texttt{absences}) van a \texttt{matricula}, cuya clave compuesta
+resuelve la relación N:M estudiante–asignatura, y los personales van a \texttt{estudiante}. En 3FN se
+extrae \texttt{escuela} para eliminar la dependencia transitiva estudiante $\rightarrow$ código de
+centro $\rightarrow$ nombre. La clasificación de atributos en personales o de matrícula se verificó
+empíricamente: en los \nPares{} estudiantes emparejados, los 14 atributos personales coinciden en el
+100\,\% de los casos (R-13, 0 conflictos), mientras que \texttt{failures} y \texttt{paid} difieren
+entre asignaturas. El marcador \texttt{reprobaciones\_3mas} se omitió en SQL porque es derivable de
+\texttt{reprobaciones\_previas} (violaría la 3FN) y se calcula en el dataset.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\sffamily\tiny, node distance=6mm and 9mm,
+  ent/.style={draw=azul, fill=fondoazul, rounded corners=1.5pt, align=left, inner sep=3pt, line width=0.6pt},
+  rel/.style={line width=0.6pt, draw=tinta}]
+\node[ent] (esc) {\textbf{escuela}\\ \underline{escuela\_id} PK\\ codigo UNIQUE\\ nombre};
+\node[ent, right=of esc] (est) {\textbf{estudiante}\\ \underline{estudiante\_id} PK\\ escuela\_id FK\\ sexo, edad, zona, …\\ (26 atributos personales)};
+\node[ent, right=of est] (mat) {\textbf{matricula}\\ \underline{estudiante\_id, asignatura\_id} PK\\ reprobaciones\_previas, clases\_pagadas\\ faltas, faltas\_confiable\\ archivo\_origen, fila\_origen UNIQUE};
+\node[ent, above=of mat] (asi) {\textbf{asignatura}\\ \underline{asignatura\_id} PK\\ codigo UNIQUE, nombre};
+\node[ent, below=of mat] (cal) {\textbf{calificacion}\\ \underline{estudiante\_id, asignatura\_id, periodo\_id} PK\\ FK compuesta $\rightarrow$ matricula\\ nota CHECK 0–20, no\_evaluado};
+\node[ent, left=of cal] (per) {\textbf{periodo}\\ \underline{periodo\_id} PK\\ codigo P1–P3, nota\_uci G1–G3\\ fecha\_inicio, fecha\_fin};
+\draw[rel] (esc) -- node[above]{1 : N} (est);
+\draw[rel] (est) -- node[above]{1 : N} (mat);
+\draw[rel] (asi) -- node[right]{1 : N} (mat);
+\draw[rel] (mat) -- node[right]{1 : 3} (cal);
+\draw[rel] (per) -- node[above]{1 : N} (cal);
+\end{tikzpicture}
+\caption{Modelo entidad–relación del esquema \texttt{academico} (3FN).}\label{fig:er}
+\fuente{\texttt{sql/01\_ddl.sql}.}
+\end{figure}
+
+El Listado~\ref{lst:ddl} muestra las dos tablas centrales. El DDL completo, con índices justificados,
+comentarios, la vista \texttt{v\_matricula\_ancha} y el rol de solo lectura, figura en el Anexo~A.
+
+\begin{lstlisting}[language=SQL, caption={Extracto del DDL: restricciones de matrícula y calificación.}, label=lst:ddl]
+CREATE TABLE matricula (
+    estudiante_id          INTEGER  NOT NULL REFERENCES estudiante (estudiante_id) ON DELETE CASCADE,
+    asignatura_id          SMALLINT NOT NULL REFERENCES asignatura (asignatura_id),
+    reprobaciones_previas  SMALLINT NOT NULL CHECK (reprobaciones_previas BETWEEN 0 AND 3), -- 3 = "3 o mas"
+    clases_pagadas         BOOLEAN  NOT NULL,
+    faltas                 SMALLINT NOT NULL CHECK (faltas BETWEEN 0 AND 93),
+    faltas_confiable       BOOLEAN  NOT NULL,                     -- anotacion de la regla R-09
+    archivo_origen VARCHAR(20) NOT NULL, fila_origen INTEGER NOT NULL,  -- linaje
+    PRIMARY KEY (estudiante_id, asignatura_id),
+    UNIQUE (archivo_origen, fila_origen));
+CREATE TABLE calificacion (
+    estudiante_id INTEGER NOT NULL, asignatura_id SMALLINT NOT NULL,
+    periodo_id    SMALLINT NOT NULL REFERENCES periodo (periodo_id),
+    nota          SMALLINT NOT NULL CHECK (nota BETWEEN 0 AND 20),   -- valor original UCI
+    no_evaluado   BOOLEAN  NOT NULL,                                 -- anotacion de la regla R-08
+    PRIMARY KEY (estudiante_id, asignatura_id, periodo_id),
+    FOREIGN KEY (estudiante_id, asignatura_id) REFERENCES matricula ON DELETE CASCADE,
+    CHECK (NOT no_evaluado OR nota = 0));
+CREATE INDEX ix_calificacion_asig_per ON calificacion (asignatura_id, periodo_id);
+\end{lstlisting}
+
+\textbf{Evidencia de carga e integridad.} Se cargaron \nRegSql{} registros en \pgVersion{}:
+2 escuelas, 2 asignaturas, 3 períodos, \nEst{} estudiantes, \nMat{} matrículas y \nCal{}
+calificaciones. Los \nControlesSql{} controles de \texttt{sql/03\_integridad.sql} se superaron
+(Tabla~\ref{tab:integridad}). Además, una prueba automatizada verifica que el motor rechaza una nota
+fuera de dominio (\texttt{CHECK}). La ejecución que respalda este informe se hizo con PostgreSQL 18 y MongoDB 8.0 en instancias locales, porque el equipo no dispone de Docker. El \texttt{docker-compose.yml} declara PostgreSQL 16 y MongoDB 8.0. El DDL y las consultas solo usan funciones disponibles desde PostgreSQL 11 (\texttt{FILTER}, \texttt{INCLUDE} en índices, \texttt{PERCENTILE\_CONT}), pero la ejecución sobre el contenedor de la versión 16 no se verificó en este entorno.
+
+\begin{table}[H]
+\centering\small
+\caption{Controles de integridad posteriores a la carga (valor observado frente a esperado).}\label{tab:integridad}
+\ajustar{generated/tab_sql_integridad.tex}
+\fuente{\texttt{sql/03\_integridad.sql}; salida en \texttt{results/sql\_integridad.csv}.}
+\end{table}
+
+\textbf{Consultas analíticas.} La consulta A-01 (JOIN de \texttt{calificacion}, \texttt{asignatura} y
+\texttt{periodo} con agregación filtrada) responde la parte descriptiva de P1
+(Tabla~\ref{tab:a01}). A-02 cruza cinco tablas para obtener la reprobación por escuela y asignatura
+(Tabla~\ref{tab:a02}). El plan de ejecución (\texttt{results/sql\_explain\_A01.txt}) muestra que, con
+\nCal{} filas, el optimizador prefiere recorridos secuenciales y \emph{hash joins}. Los índices
+compuestos se justifican por el crecimiento esperado, no por el volumen actual.
+
+\begin{table}[H]
+\centering\small
+\caption{Salida de A-01: nota por asignatura y período (evaluados).}\label{tab:a01}
+\ajustar{generated/tab_sql_a01.tex}
+\fuente{\texttt{sql/04\_analiticas.sql}; salida en \texttt{results/sql\_A-01.csv}.}
+\end{table}
+\begin{table}[H]
+\centering\small
+\caption{Salida de A-02: reprobación final por escuela y asignatura.}\label{tab:a02}
+\ajustar{generated/tab_sql_a02.tex}
+\fuente{\texttt{sql/04\_analiticas.sql}; salida en \texttt{results/sql\_A-02.csv}.}
+\end{table}
+
+\subsection{Modelo documental (MongoDB)}
+Se mantienen las dos colecciones del avance, con tres correcciones: cobertura total, unidad
+explícita y SQL como única fuente de lo académico (Mongo no replica notas).
+\begin{itemize}
+\item \texttt{seguimiento\_riesgo}: \textbf{un documento por estudiante y período} (\nDocSeg{} =
+\nEstCub{} $\times$ 3). Embebe \texttt{interacciones\_lms[]} (\nEvEmb{} eventos, cada uno con su
+\texttt{asignatura}) y \texttt{tutorias[]} (\nTutEmb{}). Incluye \texttt{periodo\_inicio} y
+\texttt{periodo\_fin} para validar la coherencia temporal. Tamaño: \mbSeg{} MB.
+\item \texttt{alertas\_riesgo}: una alerta por matrícula y período (\nDocAle{}), con ciclo de vida
+\texttt{historial\_estados[]} (abierta $\rightarrow$ en\_seguimiento $\rightarrow$ cerrada) y
+\texttt{notas[]} de texto libre con su versión normalizada y su categoría.
+\item \texttt{cuarentena}: \nCuarentena{} registros rechazados por las reglas de calidad, con su motivo (trazabilidad).
+\end{itemize}
+
+\textbf{Validación de esquema.} Ambas colecciones se crean con \texttt{validationLevel: strict} y
+\texttt{validationAction: error}. El validador combina \texttt{\$jsonSchema} (tipos, enumeraciones,
+patrones de identificadores, \texttt{es\_simulado: true} obligatorio) con reglas \texttt{\$expr} de
+coherencia temporal que el avance no controlaba (Listado~\ref{lst:validador}). El pipeline prueba el
+validador en cada ejecución: inserta una alerta con \texttt{actualizado\_en} anterior a su creación y
+un evento fuera de su período, y en ambos casos verifica que MongoDB los rechaza
+(\texttt{WriteError}).
+
+\begin{lstlisting}[caption={Reglas \texttt{\$expr} del validador de \texttt{alertas\_riesgo} (extracto de \texttt{mongo/validadores.json}).}, label=lst:validador]
+{"$expr": {"$and": [
+  {"$gte": ["$actualizado_en", "$creada_en"]},
+  {"$gte": ["$actualizado_en", {"$max": "$historial_estados.fecha"}]},
+  {"$gte": ["$actualizado_en", {"$ifNull": [{"$max": "$notas.fecha"}, "$creada_en"]}]},
+  {"$gte": [{"$ifNull": [{"$min": "$notas.fecha"}, "$creada_en"]}, "$creada_en"]},
+  {"$eq":  ["$estado", {"$arrayElemAt": ["$historial_estados.estado", -1]}]},
+  {"$eq":  [{"$arrayElemAt": ["$historial_estados.estado", 0]}, "abierta"]}]}}
+\end{lstlisting}
+
+\textbf{Índices.} Se definieron siete índices, documentados en \texttt{mongo/indices.json}:
+\texttt{(estudiante\_id, periodo)} único, que es la clave natural y evita duplicados;
+\texttt{periodo}, para el corte temporal; un índice multiclave
+\texttt{(interacciones\_lms.asignatura, periodo)}; \texttt{alerta\_id} único;
+\texttt{(estado, nivel)}, para el tablero de orientación; y un índice de texto en español sobre
+\texttt{notas.texto\_normalizado}.
+
+\textbf{Pipelines de agregación.} Hay siete pipelines documentados, con sus salidas en
+\texttt{results/mongo\_*.csv}. AG-01 aplana eventos (\texttt{\$unwind}) y agrega actividad por
+estudiante, asignatura y período (\texttt{\$group}, \texttt{\$addToSet}, \texttt{\$size}). AG-02 y
+AG-03 resumen tutorías y alertas por matrícula. AG-04 usa \texttt{\$lookup} con subpipeline para
+verificar si cada alerta tuvo una tutoría posterior de la misma asignatura (Listado~\ref{lst:ag04}, Tabla~\ref{tab:ag04}). AG-05 y AG-06 describen el ciclo de vida y las categorías del texto. AG-07
+ejecuta una búsqueda de texto completo que recupera \nBusquedaTexto{} alertas con notas sobre
+inasistencias.
+
+\begin{lstlisting}[caption={Pipeline AG-04 con \texttt{\$lookup} correlacionado (extracto de \texttt{mongo/pipelines.json}).}, label=lst:ag04]
+[{"$lookup": {"from": "seguimiento_riesgo",
+    "let": {"e": "$estudiante_id", "a": "$asignatura", "f": "$creada_en"},
+    "pipeline": [{"$match": {"$expr": {"$eq": ["$estudiante_id", "$$e"]}}},
+                 {"$unwind": "$tutorias"},
+                 {"$match": {"$expr": {"$and": [{"$eq": ["$tutorias.asignatura", "$$a"]},
+                                                {"$gte": ["$tutorias.fecha", "$$f"]}]}}},
+                 {"$count": "n"}], "as": "tut"}},
+ {"$project": {"nivel": 1, "estado": 1, "n_tut": {"$ifNull": [{"$arrayElemAt": ["$tut.n", 0]}, 0]}}},
+ {"$group": {"_id": "$nivel", "n_alertas": {"$sum": 1},
+             "con_tutoria_posterior": {"$sum": {"$cond": [{"$gt": ["$n_tut", 0]}, 1, 0]}}}}]
+\end{lstlisting}
+
+\begin{table}[H]
+\centering\small
+\caption{Salidas de AG-04\SIM{} (alertas con tutoría posterior, izquierda) y AG-05\SIM{} (nivel $\times$ estado, derecha).}\label{tab:ag04}
+\ajustar{generated/tab_mongo_ag04.tex}\hspace{1.2em}\input{generated/tab_mongo_ag05.tex}
+\fuente{\texttt{mongo/pipelines.json}; salidas en \texttt{results/mongo\_AG-04.csv} y \texttt{results/mongo\_AG-05.csv}. Datos simulados.}
+\end{table}
+
+\subsection{Regla de integración y unidad de análisis}
+\textbf{Unidad de análisis.} Una fila del dataset es una \textbf{matrícula} (estudiante $\times$
+asignatura) observada con la información disponible en cada corte temporal. El mapeo de períodos es
+explícito: P1 $\leftrightarrow$ $G1$ (15/09–16/12/2005), P2 $\leftrightarrow$ $G2$
+(03/01–24/03/2006) y P3 $\leftrightarrow$ $G3$, la nota final (10/04–16/06/2006). Se descartó la
+unidad “estudiante–período” del avance por tres razones: la reprobación se decide por asignatura;
+\texttt{failures} y \texttt{absences} son atributos de la matrícula; y los tres períodos de una misma
+matrícula son medidas repetidas, no observaciones independientes. El dataset tiene \nFilasDs{} filas
+y \nColsDs{} columnas.
+
+\textbf{Regla de integración.} Se hace un \texttt{LEFT JOIN} desde la vista
+\texttt{v\_matricula\_ancha} (PostgreSQL) hacia las salidas de AG-01, AG-02 y AG-03 (MongoDB) por la
+clave \texttt{(estudiante\_id, asignatura)}. Se verifica que el número de filas no cambia (1:1). La
+ausencia de registros simulados se imputa como 0 actividad (R-26). El diccionario de datos
+(Anexo~B) y la tabla de linaje (Anexo~C) documentan tipo, dominio, origen y transformación de cada
+variable. El Anexo~D relaciona las variables esperadas en el avance con las finales.
+
+% =============================================================================
+\section{Calidad, limpieza y transformación}
+% =============================================================================
+\subsection{Diagnóstico inicial}
+El registro UCI no tiene valores faltantes (R-02), ni duplicados exactos (R-03), ni valores fuera
+de los dominios documentados (R-04, R-05). Sus problemas son de \emph{semántica}, no de sintaxis:
+(i) no incluye identificador de estudiante; (ii) una nota 0 no es una nota real; (iii)
+\texttt{failures} está truncado; (iv) las faltas son un total anual. Las fuentes simuladas llevan
+defectos inyectados deliberadamente, con tasas explícitas, para ejercitar las reglas y verificar que
+cada una detecta exactamente lo que se inyectó (§\ref{sec:gen}).
+
+\subsection{Regla de identidad: de 1.044 filas a \nEst{} estudiantes}
+UCI indica que 382 estudiantes pertenecen a ambos archivos y que se identifican por 13 atributos
+comunes (\texttt{school, sex, age, address, famsize, Pstatus, Medu, Fedu, Mjob, Fjob, reason,
+nursery, internet}). La verificación reveló que la clave de 13 atributos \textbf{no es única dentro
+de cada archivo}: hay \nGruposRep{} grupos de filas con igual clave pero notas distintas, es decir, estudiantes
+distintos. Por eso el \emph{merge} directo del script R de UCI produce \nMergeIngenuo{} filas por
+productos cruzados, aunque solo existen \nClavesComunes{} claves comunes. El avance deduplicó por clave: \nClavesMat{} claves en MAT + \nClavesPor{} en POR = \nMatAvance{} “matrículas” y \nClavesUnion{} “estudiantes” (unión de claves). Eso fusionó erróneamente a \nPerdidasFusion{} estudiantes reales y explica las \nPerdidasFusion{} matrículas perdidas.
+
+La regla aplicada (\texttt{transform.py::resolver\_identidad}) tiene dos etapas:
+\begin{enumerate}
+\item \textbf{Candidatos por clave exacta} de 13 atributos entre un archivo y el otro (nunca dentro del mismo archivo, R-11).
+\item \textbf{Desambiguación} dentro de cada clave mediante una asignación 1:1 (algoritmo húngaro)
+que maximiza las coincidencias en 14 atributos personales que no dependen de la asignatura. Un par
+se acepta si alcanza al menos 12 de 14 coincidencias y el máximo es único.
+\end{enumerate}
+Resultado: \nPares{} pares aceptados. De ellos, \nParesUno{} proceden de claves únicas (etapa 1) y
+\nParesDos{} de claves ambiguas (etapa 2), y todos coinciden en 14 de 14 atributos. Las alternativas
+descartadas coincidían como máximo en 10 de 14. Por tanto, 1.044 filas $-$ \nPares{} pares $=$
+\textbf{\nEst{} estudiantes}: \nPares{} en ambas asignaturas, \nSoloMat{} solo en Matemáticas y
+\nSoloPor{} solo en Portugués. Esto da \textbf{\nMat{} matrículas} y \textbf{\nCal{} calificaciones}
+(\nMat{} $\times$ 3), cifras que corrigen las del avance.
+
+\textbf{Riesgos de la regla.} Un \emph{falso positivo} sería fusionar dos personas distintas; se
+mitiga exigiendo 12 o más coincidencias personales y un máximo único, y no se observó ningún
+conflicto. Un \emph{falso negativo} sería no unir a la misma persona. El diagnóstico R-12b encontró
+\nFalsosNeg{} pares sin emparejar que coinciden en 26 de 27 atributos (Tabla~\ref{tab:fn}, Anexo~E): cuatro difieren
+solo en la edad, en filas consecutivas de ambos archivos, lo que sugiere un error de registro, y uno
+en la educación del padre. Se mantuvo la regla estricta y el número de estudiantes queda acotado
+entre \nEstMin{} y \nEst{} (0,7\,\%). El efecto sobre los resultados es despreciable, porque la
+unidad de análisis es la matrícula, que no cambia.
+
+\subsection{Catálogo de reglas de calidad}
+La Tabla~\ref{tab:reglas} lista las reglas aplicadas con su justificación, implementación (archivo y
+función) y número de registros afectados en la ejecución final. Las decisiones sobre anomalías
+conocidas y su impacto en N son estas:
+\begin{itemize}
+\item \textbf{R-08, nota 0.} Hay \reglaRCeroOcho{} calificaciones con valor 0: 53 en $G3$, 20 en
+$G2$ y 1 en $G1$. En $G3$, todas tienen 0 faltas y la mayoría va precedida de notas positivas: es el
+patrón de abandono o de no presentarse. Se conservan en SQL con \texttt{no\_evaluado = true}, se
+excluyen de las medias (la inclusión ingenua sesgaría la media de Matemáticas en P3 de
+\mediaMatPTres{} a \mediaCerosMatPTres{}) y cuentan como reprobación en \texttt{en\_riesgo}, porque
+desde la perspectiva institucional no aprobar es el evento de interés. El único $G1 = 0$ va seguido
+de $G2 = G3 = 11$, lo que indica un registro faltante en P1.
+\item \textbf{R-07, \texttt{failures}.} La documentación indica “n si 1 $\leq$ n $<$ 3; si no, 4”,
+pero los datos solo contienen valores 0–3. Se interpreta 3 como “3 o más”
+(\reglaRCeroSiete{} matrículas) y se trata como variable ordinal.
+\item \textbf{R-09, 0 faltas en no evaluados.} Las \reglaRCeroNueve{} matrículas con $G3 = 0$ tienen
+0 faltas, un valor implausible para un abandono. Se marcan con
+\texttt{faltas\_confiable = false} y se excluyen de los análisis que dependen de las faltas
+(§\ref{sec:principal}), con análisis de sensibilidad.
+\item \textbf{R-10, atípicos en faltas.} Hay \reglaRUnoCero{} matrículas por encima de la valla
+extrema de Tukey. Se conservan, por tratarse de valores plausibles (máximo 75), y se usan métodos
+robustos (medianas, pruebas de rangos).
+\end{itemize}
+
+\begin{sidewaystable}
+\centering\scriptsize
+\caption{Catálogo de reglas de calidad, transformación e integración con registros afectados (ejecución final).}\label{tab:reglas}
+\input{generated/tab_reglas.tex}
+\fuente{\texttt{logs/reglas\_calidad.csv}, generado por \texttt{src/tracking.py::regla} durante la ejecución.}
+\end{sidewaystable}
+
+\subsection{Variable objetivo y variables derivadas}
+\textbf{Definición operativa.} $\texttt{en\_riesgo} = 1 \iff G3 < 10$, que es el umbral de
+aprobación del sistema portugués en escala 0–20 (Cortez \& Silva, 2008), e incluye los no evaluados
+($G3=0$). Afecta a \nRiesgo{} de \nFilasDs{} matrículas (\prevTot{} \prevIcTot{}). Se eligió la
+reprobación \emph{final} porque es el resultado que la institución quiere prevenir; la
+predicción \emph{temprana} se logra restringiendo los predictores, no redefiniendo el objetivo.
+Otras variables derivadas son \texttt{rendimiento\_sobre\_promedio}, que vale 1 si $G3$ supera la
+media de su asignatura y se usa en P2; \texttt{reprobaciones\_3mas}; \texttt{faltas\_atipicas};
+\texttt{en\_ambas\_asignaturas}; y once variables simuladas \texttt{sim\_*}.
+
+\subsection{Reglas contra la fuga de información}
+\begin{itemize}
+\item \textbf{L-01.} $G3$ solo define el objetivo; nunca es predictor. El \texttt{promedio\_general} del avance, que incluía $G3$, se eliminó.
+\item \textbf{L-02.} \texttt{faltas} es un total anual y no está disponible al cierre de P1. Se excluye del modelo temprano y solo se usa como sensibilidad.
+\item \textbf{L-03.} Del LMS solo se usan eventos con fecha menor o igual al fin de P1. Las tutorías y alertas (P2–P3) son posteriores al corte y solo son descriptivas.
+\item \textbf{L-04.} La partición entrenamiento/prueba (80/20; \nTrain{}/\nTest{}) es estratificada, está \emph{agrupada por estudiante} y se fijó en \texttt{integrate.py} antes de cualquier análisis. La validación cruzada también está agrupada.
+\end{itemize}
+Las pruebas automatizadas verifican L-01 a L-04 en cada ejecución (\texttt{tests/test\_pipeline.py}).
+
+\subsection{Proceso generador de los datos simulados}\label{sec:gen}
+El generador (\texttt{src/generate\_synthetic.py}; semilla 42) cubre las \nMat{} matrículas. Su
+diseño evita la circularidad señalada en el avance: \textbf{la actividad LMS no depende de ninguna
+nota}.
+\begin{align*}
+\eta_m &= -0{,}40 + 0{,}30\,(\text{estudio}-2) - 0{,}35\,\text{reprob} + 0{,}40\,\text{internet} + 0{,}25\,\text{superior} + a_i + \varepsilon_m,\\
+&\qquad a_i \sim N(0;\,0{,}5^2),\quad \varepsilon_m \sim N(0;\,0{,}5^2),\\
+N_{mt} &\sim \text{Poisson}\big(12\,e^{\eta_m} f_t\big),\quad f=(1;\ 0{,}9;\ 0{,}8)\ \text{para P1, P2, P3},\\
+\text{duración} &\sim \text{LogNormal}(\ln 15 + 0{,}2\,\eta_m;\ 0{,}6),\ \text{acotada a } [1, 240]\ \text{min}.
+\end{align*}
+Por construcción, la actividad LMS es condicionalmente independiente de $G3$ dadas las covariables
+reales. Cualquier asociación que muestre el análisis se explica por esas covariables, y la sensibilidad del §\ref{sec:sens} lo confirma. Las tutorías (probabilidad 0,70 si $G1<10$; 0,15 si hay
+reprobaciones previas; 0,04 en otro caso) y las alertas (alto si $G1<8$; medio si $8 \leq G1 < 10$ o
+si hay 2 o más reprobaciones) simulan una regla institucional de alerta temprana que se activa al
+cierre de P1 con información ya disponible. El texto libre se genera con plantillas por categoría y
+ruido tipográfico (tildes omitidas, mayúsculas, abreviaturas, espacios dobles).
+
+Los defectos se inyectaron con tasas explícitas: 2\,\% de duplicados, 5\,\% de tipos no estándar,
+0,5\,\% de duraciones negativas y 0,5\,\% de duraciones excesivas, 0,3\,\% de fechas fuera de
+calendario, 0,2\,\% de estudiantes inexistentes, 0,2\,\% de fechas faltantes y 12\,\% de alertas
+incoherentes. La Tabla~\ref{tab:verdad} compara los defectos inyectados con los detectados: todas
+las reglas detectan exactamente lo inyectado, lo que valida su implementación.
+
+\begin{table}[H]
+\centering\small
+\caption{Validación de las reglas: defectos inyectados por el generador frente a detectados por el ETL (datos simulados).}\label{tab:verdad}
+\ajustar{generated/tab_verdad_generador.tex}
+\fuente{\texttt{data/raw/synthetic/\_verdad\_generador.json} y \texttt{logs/reglas\_calidad.csv}; verificado por \texttt{test\_reglas\_detectan\_exactamente\_lo\_inyectado}.}
+\end{table}
+
+% =============================================================================
+\section{Proceso ETL}
+% =============================================================================
+\subsection{Extract}
+\texttt{extract.py} descarga el ZIP oficial de UCI si falta y extrae el ZIP anidado. Verifica el
+SHA-256 de cada CSV contra el valor registrado en \texttt{config.py}, lee con esquema explícito de 33
+columnas (R-01; los enteros llegan a veces entrecomillados) y añade las columnas de linaje
+\texttt{archivo\_origen} y \texttt{fila\_origen}. Deja una copia inmutable en
+\texttt{data/staging/uci\_raw.parquet}. \texttt{generate\_synthetic.py} escribe los JSON crudos
+simulados en \texttt{data/raw/synthetic/}, con el mismo formato que tendría una exportación de logs.
+
+\subsection{Transform}
+\texttt{transform.py} aplica R-02 a R-14 al registro UCI: diagnóstico, identidad,
+estandarización, anomalías y 1FN/3FN. Produce las seis tablas en \texttt{data/staging/}.
+\texttt{transform\_synthetic.py} aplica R-15 a R-25 a los JSON: los registros inválidos pasan a
+cuarentena, los duplicados se eliminan, las categorías se mapean, se asigna el período por fecha y se
+corrige la coherencia temporal y el texto. Después construye los documentos de las colecciones.
+\texttt{integrate.py} aplica R-26 y L-04 y deriva la variable objetivo.
+
+\subsection{Load}
+\texttt{load.py} recrea el esquema (\texttt{01\_ddl.sql}) e inserta las tablas en orden de
+dependencias dentro de una transacción. Luego crea la vista y el rol (\texttt{02}) y ejecuta los
+controles (\texttt{03}) y las consultas analíticas (\texttt{04}): si un control falla, la ejecución
+se detiene. En MongoDB crea las colecciones con validador e índices, inserta los documentos, registra
+en cuarentena los rechazos, prueba el validador y ejecuta los siete pipelines.
+
+\subsection{Evidencias de ejecución}
+La Tabla~\ref{tab:conteos} resume los conteos de entrada, rechazo y salida por etapa de la ejecución final; la Tabla~\ref{tab:duraciones}, la duración de cada etapa; y la Tabla~\ref{tab:checksums}, los checksums que permiten verificar la integridad de entradas y salidas. La duración total es de \tiempoTotal{} s, la
+mayor parte en el análisis estadístico (\emph{bootstrap}) y el benchmark.
+
+\begin{table}[H]
+\centering\small
+\caption{Conteos por etapa de la ejecución final (registros de entrada, rechazados y de salida).}\label{tab:conteos}
+\ajustar{generated/tab_conteos_etapas.tex}
+\fuente{\texttt{logs/ultima\_ejecucion.json}.}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\begin{minipage}[t]{0.36\textwidth}\centering
+\caption{Duración por etapa.}\label{tab:duraciones}
+\ajustar{generated/tab_duraciones.tex}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.6\textwidth}\centering
+\caption{Checksums de entradas y salidas principales.}\label{tab:checksums}
+\ajustar{generated/tab_checksums.tex}
+\end{minipage}
+\fuente{\texttt{logs/ultima\_ejecucion.json}; los hashes completos figuran en el mismo archivo.}
+\end{table}
+
+\subsection{Reproducibilidad}
+\begin{itemize}
+\item \textbf{Un solo comando:} \texttt{python run\_pipeline.py} reconstruye todo desde los CSV de UCI (o \texttt{make all}, que añade pruebas y PDF).
+\item \textbf{Semilla fija:} \texttt{SEED = 42} en la generación sintética, la partición, la validación cruzada, los modelos y cada \emph{bootstrap}. Cada procedimiento aleatorio usa su propio generador sembrado, de modo que los resultados no dependen del orden de ejecución.
+\item \textbf{Determinismo verificado:} tres ejecuciones consecutivas produjeron archivos de resultados con SHA-256 idénticos. Las métricas se redondean a 6 decimales para absorber el ruido de coma flotante de los cálculos multihilo.
+\item \textbf{Entorno fijado:} \texttt{requirements.txt} (versiones exactas), \texttt{requirements-lock.txt} (\texttt{pip freeze} completo), \texttt{docker-compose.yml} (PostgreSQL 16 y MongoDB 8) y \texttt{.env.example}.
+\item \textbf{Pruebas:} 17 pruebas \texttt{pytest}, todas superadas: conteos, dominios, identidad, ausencia de fuga, detección igual a inyección, integridad en vivo, rechazo del validador y reproducibilidad del generador.
+\item \textbf{Cifras del informe generadas:} \texttt{report\_tables.py} produce todas las tablas y macros numéricas de este documento a partir de \texttt{results/} y \texttt{logs/}; ninguna cifra se transcribió a mano.
+\end{itemize}
+
+% =============================================================================
+\section{Escalabilidad}
+% =============================================================================
+\textbf{Pregunta.} ¿Requiere el caso procesamiento distribuido? Se respondió \emph{midiendo}.
+\texttt{benchmark\_escalabilidad.py} replica los eventos LMS limpios hasta $\times$\benchMaxFactor{},
+con estudiantes nuevos para que también crezca el número de grupos, y mide en un solo nodo
+(\benchEquipo{}) la huella en memoria, el tamaño en Parquet y el tiempo de la agregación equivalente
+a AG-01 (Tabla~\ref{tab:escala}, Figura~\ref{fig:escala}).
+
+\begin{table}[H]
+\centering\small
+\caption{Benchmark medido en un nodo (pandas + pyarrow): eventos LMS replicados.}\label{tab:escala}
+\ajustar{generated/tab_escalabilidad.tex}
+\fuente{\texttt{results/escalabilidad.csv}. Tiempos de una ejecución; varían levemente entre corridas.}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/fig_escalabilidad.png}
+\caption{Tiempo y huella de datos frente al número de eventos (escala log–log).}\label{fig:escala}
+\fuente{\texttt{src/benchmark\_escalabilidad.py}.}
+\end{figure}
+
+\textbf{Análisis de las cuatro V.}
+\begin{itemize}
+\item \textbf{Volumen.} El caso real ocupa \benchUciKb{} kB en CSV y \nEvLimpios{} eventos simulados.
+Incluso con \benchMaxFilas{} eventos, la huella es de \benchMaxMem{} MB (\benchBpf{} bytes por fila)
+y la agregación tarda \benchMaxT{} s. En MongoDB, AG-01 sobre los datos reales tarda \benchMongo{} s.
+\item \textbf{Velocidad.} Las notas se actualizan tres veces al año y la decisión (derivar a tutoría) es
+por lotes, al cierre de cada período. No hay un requisito de latencia que justifique
+\emph{streaming}.
+\item \textbf{Variedad.} La heterogeneidad (tabular, documental, texto) se resuelve con el almacenamiento
+híbrido, no con cómputo distribuido.
+\item \textbf{Costo.} Spark exige JVM, configuración de clúster y serialización, lo que añade complejidad
+operativa y puntos de fallo sin mejorar ningún tiempo relevante del caso.
+\end{itemize}
+
+\textbf{Umbral de decisión.} Con \benchBpf{} bytes por fila y un margen $\times$3 para intermedios, un
+nodo de 8 GB procesa unos \benchMaxNodo{} millones de eventos en memoria. La Tabla~\ref{tab:escenarios}
+proyecta escenarios con la tasa del generador (\benchEvMat{} eventos por matrícula y año) y el
+rendimiento medido (\benchFps{} millones de filas/s). Estas proyecciones son extrapolaciones lineales
+bajo supuestos declarados.
+
+\begin{table}[H]
+\centering\small
+\caption{Escenarios de escalado (supuestos explícitos; extrapolación del rendimiento medido).}\label{tab:escenarios}
+\ajustar{generated/tab_escenarios.tex}
+\fuente{\texttt{results/escalabilidad\_escenarios.csv}.}
+\end{table}
+
+\textbf{Decisión.} \textbf{No se implementa Spark.} El volumen real está \benchOrdenes{} órdenes de magnitud por debajo del umbral de un nodo, y el benchmark lo confirma. Spark estaría justificado en
+el escenario de una red nacional con registros de clics (\emph{clickstream}): unos $10^{9}$--$10^{10}$
+eventos al año, que superan la memoria de un nodo, con ingesta continua (Spark Structured Streaming
+o Kafka), particionado por centro y fecha en Parquet y agregaciones distribuidas equivalentes a
+AG-01. La arquitectura actual ya facilita esa migración: Parquet columnar, agregaciones expresadas
+como \texttt{groupby} y un orquestador por etapas. Forzar Spark en este caso no aportaría el “valor
+real” que exige la bonificación.
+
+% =============================================================================
+\section{Resultados e interpretación}
+% =============================================================================
+\textbf{Convenciones.} Las secciones 8.1 a 8.4 usan solo datos reales, salvo las columnas marcadas
+[SIM]. Los intervalos son al 95\,\%: Wilson para proporciones, $t$ para medias y \emph{bootstrap}
+percentil (2.000 réplicas) para tamaños de efecto. Las comparaciones múltiples se corrigen por Holm.
+Como 370 estudiantes aportan dos matrículas, las pruebas se estratifican por asignatura y los
+modelos logísticos inferenciales usan errores agrupados por estudiante.
+
+\subsection{Descripción de la población}
+\begin{table}[H]
+\centering\scriptsize
+\caption{Descriptivos por asignatura (medianas y rango intercuartílico; notas de evaluados).}\label{tab:descriptivos}
+\ajustar{generated/tab_descriptivos.tex}
+\fuente{\texttt{results/descriptivos.csv}.}
+\end{table}
+La prevalencia de reprobación final es el doble en Matemáticas (\prevMat{} \prevIcMat{}) que en
+Portugués (\prevPor{} \prevIcPor{}), con intervalos que no se solapan (Tabla~\ref{tab:descriptivos}).
+Las faltas son asimétricas (mediana muy inferior al máximo de 75), lo que justifica los métodos no
+paramétricos.
+
+\subsection{P1: evolución de la nota y combinaciones centro–asignatura}\label{sec:p1}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig_p1_evolucion.png}
+\caption{Nota media por período, asignatura y escuela (evaluados; IC 95\,\%).}\label{fig:p1evol}
+\fuente{\texttt{results/p1\_medias\_periodo\_escuela.csv}.}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\caption{P1: cambio de la nota entre períodos (matrículas evaluadas en los tres períodos; Wilcoxon con Holm).}\label{tab:p1pruebas}
+\ajustar{generated/tab_p1_pruebas.tex}
+\fuente{\texttt{results/p1\_pruebas\_evolucion.csv}. $r_{rb}$: correlación biserial de rangos para muestras pareadas.}
+\end{table}
+
+\textbf{Evolución.} La nota media aumenta ligeramente a lo largo del curso en ambas asignaturas
+(Figura~\ref{fig:p1evol}, Tabla~\ref{tab:p1pruebas}). En Portugués el cambio es sistemático
+(Friedman $\chi^2$ = \friedChiPor{}, $p$ \friedPPor{}; W de Kendall = \kendallWPor{}), con una
+mejora media de P1 a P3 de \difPUnoTresPor{} puntos \difPUnoTresIcPor{}. En Matemáticas es menor y
+de magnitud despreciable ($\chi^2$ = \friedChiMat{}, $p$ = \friedPMat{}; W = \kendallWMat{};
+P1$\rightarrow$P3 = \difPUnoTresMat{} \difPUnoTresIcMat{}). En la práctica, ningún cambio altera la
+situación de aprobación de un estudiante típico (menos de un punto sobre 20). \textbf{Advertencia de
+interpretación:} el aumento se calcula sobre quienes siguen evaluados. Los que abandonan salen de la
+media (sesgo de supervivencia), y si se incluyeran sus ceros la media de Matemáticas
+\emph{descendería} de \mediaCerosMatPUno{} en P1 a \mediaCerosMatPTres{} en P3. Este contraste
+justifica la regla R-08.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figuras/fig_p1_reprobacion.png}
+\caption{Tasa de reprobación final por asignatura y escuela (IC 95\,\% de Wilson).}\label{fig:p1rep}
+\fuente{\texttt{results/p1\_reprobacion\_escuela\_asignatura.csv}.}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\begin{minipage}[t]{0.56\textwidth}\centering
+\caption{Reprobación por asignatura y escuela.}\label{tab:p1rep}
+\ajustar{generated/tab_p1_reprobacion.tex}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.42\textwidth}\centering
+\caption{Reprobación en P3 según el estado en P1.}\label{tab:persist}
+\ajustar{generated/tab_p1_persistencia.tex}
+\end{minipage}
+\fuente{\texttt{results/p1\_reprobacion\_escuela\_asignatura.csv} y \texttt{results/p1\_persistencia.csv}. “Prioritaria”: límite inferior del IC mayor que la tasa global (\prevTot{}).}
+\end{table}
+
+\textbf{Combinaciones que exigen intervención.} Se definió como prioritaria una combinación cuyo
+límite inferior del IC de Wilson supera la tasa global. Tres de las cuatro cumplen el criterio
+(Tabla~\ref{tab:p1rep}, Figura~\ref{fig:p1rep}):
+\begin{itemize}
+\item Matemáticas en ambos centros: GP con \tasaMatGp{} \tasaIcMatGp{} y MS con \tasaMatMs{}
+\tasaIcMatMs{}. La diferencia entre centros no es significativa ($\chi^2$ = \chiEscMat{}, $p$ Holm
+= \chiEscPMat{}, V = \vEscMat{}).
+\item Portugués en Mousinho da Silveira: \tasaPorMs{} \tasaIcPorMs{} frente a \tasaPorGp{} en
+Gabriel Pereira. La diferencia de \difEscPor{} puntos porcentuales es significativa y de tamaño
+moderado ($\chi^2$ = \chiEscPor{}, $p$ Holm \chiEscPPor{}, V = \vEscPor{}).
+\end{itemize}
+El efecto de centro es, por tanto, específico de la asignatura. En los datos disponibles, la
+diferencia en Portugués no puede separarse de la composición del alumnado de cada centro (dato
+observacional). Además, la reprobación en P1 anticipa con fuerza la final
+(Tabla~\ref{tab:persist}): reprueban al final el \persMatRep{} de quienes reprueban P1 en Matemáticas
+frente al \persMatApr{} de quienes lo aprueban, y en Portugués el \persPorRep{} frente al
+\persPorApr{}. Este hallazgo fundamenta el corte temprano.
+
+\subsection{P2: condiciones que distinguen el rendimiento sobre y bajo el promedio}\label{sec:p2}
+Se compararon las matrículas evaluadas con $G3$ por encima de la media de su asignatura con las que
+quedaron por debajo: \nSobreMat{} frente a \nBajoMat{} en Matemáticas y \nSobrePor{} frente a
+\nBajoPor{} en Portugués (Tabla~\ref{tab:p2}, Figura~\ref{fig:p2}).
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{P2: comparación sobre/bajo el promedio por asignatura (MW: Mann-Whitney U con $\delta$ de Cliff; $\chi^2$: chi-cuadrado con diferencia de proporciones y V de Cramér; $p$ corregido por Holm).}\label{tab:p2}
+\ajustar{generated/tab_p2.tex}
+\fuente{\texttt{results/p2\_condiciones.csv}. Resumen: mediana [RIC] o porcentaje. [SIM] = variable simulada.}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig_p2_cliff.png}
+\caption{Tamaño de efecto ($\delta$ de Cliff, IC 95\,\% \emph{bootstrap}) de las variables ordinales y numéricas en P2.}\label{fig:p2}
+\fuente{\texttt{results/p2\_condiciones.csv}.}
+\end{figure}
+
+\textbf{Interpretación (datos reales).}
+\begin{itemize}
+\item En ambas asignaturas, quienes quedan bajo el promedio tienen \textbf{más faltas}
+($\delta$ = \cdMatFaltas{} en MAT; \cdPorFaltas{} en POR) y \textbf{más reprobaciones previas}
+($\delta$ = \cdMatReprobacionesPrevias{} y \cdPorReprobacionesPrevias{}). Son efectos pequeños pero
+consistentes.
+\item El \textbf{tiempo de estudio} distingue en Portugués ($\delta$ = \cdPorTiempoEstudio{}), no en
+Matemáticas ($\delta$ = \cdMatTiempoEstudio{}).
+\item La aspiración a educación superior es mucho más frecuente sobre el promedio en Portugués
+(V = \cdPorDeseaSuperior{}).
+\item El \textbf{refuerzo escolar} es \emph{más} frecuente en el grupo bajo el promedio (V =
+\cdMatApoyoEscolar{} en MAT). Esto refleja que el refuerzo se asigna a quien ya tiene dificultades
+(causalidad inversa), no que perjudique. Es un ejemplo de por qué la asociación no implica
+causalidad.
+\item Las clases pagadas no distinguen.
+\end{itemize}
+\textbf{Variables simuladas.} Los minutos LMS\SIM{} muestran $\delta$ = \cdPorSimLmsMinutosPUno{} en
+Portugués y \cdMatSimLmsMinutosPUno{} en Matemáticas. No es un hallazgo: el generador hace depender
+el LMS del tiempo de estudio y de la aspiración a estudios superiores, que en Portugués sí se
+asocian al rendimiento. La señal simulada solo reproduce, atenuada, la de esas covariables reales.
+
+\subsection{Pregunta principal: combinación de factores y acompañamiento asociado}\label{sec:principal}
+Se definieron tres factores: \emph{alta inasistencia} (cuartil superior de faltas de la asignatura;
+real), \emph{reprobaciones previas} (1 o más; real) y \emph{bajo involucramiento LMS} (cuartil
+inferior de minutos LMS en P1; simulado). Conforme a R-09, el análisis usa las \nConfiables{}
+matrículas con faltas confiables.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Perfiles de riesgo: reprobación final y acompañamiento asociado (columnas [SIM] simuladas).}\label{tab:perfiles}
+\ajustar{generated/tab_principal_perfiles.tex}
+\fuente{\texttt{results/principal\_perfiles.csv}; matrículas con faltas confiables.}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[c]{0.5\textwidth}\centering
+\includegraphics[width=\linewidth]{figuras/fig_principal_factores.png}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.47\textwidth}\centering\scriptsize
+\ajustar{generated/tab_principal_or.tex}
+\end{minipage}
+\caption{Gradiente de reprobación según el número de factores reales (izquierda) y odds ratios ajustados con errores agrupados por estudiante (derecha).}\label{fig:principal}
+\fuente{\texttt{results/principal\_gradiente.csv} y \texttt{results/principal\_or.csv}.}
+\end{figure}
+
+\textbf{Interpretación.} La reprobación crece de forma monótona con el número de factores reales:
+\gradCero{} \gradIcCero{} sin factores (n = \gradNCero{}), \gradUno{} \gradIcUno{} con uno
+(n = \gradNUno{}) y \gradDos{} \gradIcDos{} con ambos (n = \gradNDos{}) (Figura~\ref{fig:principal}).
+Ajustando por asignatura, las reprobaciones previas multiplican las odds por \orReprob{}
+\orReprobIc{} y la alta inasistencia por \orInasist{} \orInasistIc{}. La regla R-09 importa: si se
+incluyen los no evaluados con 0 faltas no confiables, el OR de inasistencia se atenúa a
+\orInasistTodas{} \orInasistTodasIc{} y deja de ser significativo, lo que llevaría a una conclusión
+errónea. En la Tabla~\ref{tab:perfiles}, los perfiles con reprobaciones previas tienen tasas de reprobación de entre \perfRepMin{} y \perfRepMax{}, con independencia del LMS. El factor LMS\SIM{} no muestra un patrón propio,
+consistente con su proceso generador. En cuanto al acompañamiento\SIM{}, los perfiles de mayor
+riesgo concentran más alertas y tutorías, porque la regla simulada las dispara con $G1<10$. AG-04 muestra que el \agCuatroMedio{} de las alertas de nivel medio y el \agCuatroAlto{} de las de nivel alto tienen una tutoría posterior, y que ninguna de nivel bajo la tiene. Esto demuestra la capacidad del pipeline para
+responder este tipo de consulta, pero no mide la eficacia de las tutorías.
+
+\subsection{Modelo de predicción temprana}\label{sec:modelo}
+\textbf{Diseño.} Se definieron escenarios de información creciente: C, solo antecedentes al
+matricular (sin notas); \textbf{A, corte P1}, que es C más $G1$ y es el escenario principal; y B,
+corte P2, que añade $G2$. Se comparan una línea base (probabilidad a priori), una regresión
+logística (interpretable) y dos modelos no lineales: \emph{random forest} (Breiman, 2001) y
+\emph{gradient boosting} (Friedman, 2001). La evaluación usa validación cruzada estratificada y
+agrupada por estudiante (5 pliegues) en entrenamiento, y una evaluación final única en el conjunto
+de prueba reservado (\nTest{} matrículas, \nRiesgoTest{} en riesgo, \prevTest{}). Por el
+desbalance, se reportan AUC-PR, recall, precisión, F1 y Brier además del AUC-ROC (Saito \&
+Rehmsmeier, 2015). El umbral de decisión se fijó en entrenamiento, con predicciones fuera de pliegue,
+como el mayor umbral que logra un recall de al menos 0,80, porque en alerta temprana omitir a un
+estudiante en riesgo cuesta más que una derivación innecesaria.
+
+\begin{sidewaystable}
+\centering\scriptsize
+\caption{Métricas de los modelos por escenario (CV: media $\pm$ DE en 5 pliegues agrupados; test: conjunto reservado, IC 95\,\% \emph{bootstrap} por estudiante).}\label{tab:modelos}
+\input{generated/tab_modelos.tex}
+\fuente{\texttt{results/modelo\_metricas.csv}. Recall, precisión y F1 con el umbral fijado en entrenamiento (recall OOF $\geq$ 0,80).}
+\end{sidewaystable}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig_modelo_roc_pr.png}
+\caption{Curvas ROC y precisión–recall en prueba, escenario A (corte P1).}\label{fig:roc}
+\fuente{\texttt{src/analysis.py::modelado}.}
+\end{figure}
+
+\textbf{Resultados.} La Tabla~\ref{tab:modelos} reúne las métricas de todos los escenarios y modelos, y la Figura~\ref{fig:roc} muestra las curvas del escenario principal. En el escenario A, la regresión logística obtiene un AUC-ROC en prueba
+de \aucALr{} \aucIcALr{} (CV: \cvaucALr{}), un AUC-PR de \aucprALr{} (línea base: \aucprABase{}) y,
+con el umbral preespecificado, recall \recALr{}, precisión \precALr{}, especificidad \espALr{}, F1
+\foneALr{} y Brier \brierALr{} (línea base: \brierABase{}). La matriz de confusión en prueba es
+VP = \tpALr{}, FN = \fnALr{}, FP = \fpALr{} y VN = \tnALr{}: se detectan \tpALr{} de los \nRiesgoTest{} casos en riesgo, a costa de \fpALr{} derivaciones innecesarias. Los modelos no lineales no superan a la logística
+(\emph{random forest} \aucARf{}, \emph{gradient boosting} \aucAGb{}), así que se prefiere el modelo
+interpretable. El valor de la información temprana es claro: pasar de C (sin notas, AUC \aucCLr{})
+a A (con $G1$) añade $\Delta$AUC = \dACLr{} \dIcACLr{}. Esperar a P2 añade solo \dBALr{}
+\dIcBALr{} más, y a cambio se pierde un período de intervención. El rendimiento es similar por
+centro y asignatura (Tabla~\ref{tab:estratos}), sin degradación en el centro minoritario.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig_modelo_calibracion_importancia.png}
+\caption{Calibración en prueba (izquierda) e importancia por permutación del mejor modelo no lineal en CV (derecha), escenario A.}\label{fig:calib}
+\fuente{\texttt{results/modelo\_importancia\_permutacion.csv}.}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\begin{minipage}[t]{0.52\textwidth}\centering
+\caption{Odds ratios del modelo logístico parsimonioso (corte P1; entrenamiento; errores agrupados por estudiante).}\label{tab:odds}
+\ajustar{generated/tab_odds.tex}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}\centering
+\caption{Desempeño del modelo A (logística) por estrato en prueba.}\label{tab:estratos}
+\ajustar{generated/tab_estratos.tex}
+\end{minipage}
+\fuente{\texttt{results/modelo\_odds\_ratios.csv} y \texttt{results/modelo\_estratos.csv}. Predictores del modelo parsimonioso preespecificados.}
+\end{table}
+
+\textbf{Interpretación.} Cada punto adicional en $G1$ multiplica las odds de reprobar por
+\orNotaUno{} \orNotaUnoIc{}, es decir, las reduce en torno al \orNotaUnoRed{} por punto (Tabla~\ref{tab:odds}). Condicionado a $G1$,
+cursar Portugués reduce las odds (OR \orPor{} \orPorIc{}), igual que aspirar a educación superior
+(OR \orSup{} \orSupIc{}). Las reprobaciones previas y el centro dejan de ser significativos una vez
+que se conoce $G1$ (centro MS: OR \orEsc{} \orEscIc{}), porque su efecto ya está incorporado en esa
+nota. La importancia por permutación coincide con esta lectura: permutar $G1$ reduce el AUC en
+\impNotaUno{}, y la siguiente variable (\impSegunda{}) solo en \impSegundaV{}. La calibración de la
+logística es aceptable (Figura~\ref{fig:calib}); el \emph{random forest} subestima las
+probabilidades altas. Por eso, para comunicar probabilidades se recomienda la logística.
+
+\subsection{Sensibilidad: datos reales frente a datos simulados}\label{sec:sens}
+\begin{table}[H]
+\centering\small
+\caption{Análisis de sensibilidad: cambio de AUC-ROC en prueba al añadir o quitar información (IC 95\,\% \emph{bootstrap} pareado por estudiante).}\label{tab:sens}
+\ajustar{generated/tab_sensibilidad.tex}
+\fuente{\texttt{results/modelo\_sensibilidad.csv}.}
+\end{table}
+
+\begin{itemize}
+\item \textbf{Con y sin variables simuladas.} Añadir las cuatro variables LMS\SIM{} del corte P1 no
+cambia el desempeño: $\Delta$AUC = \dAsimALr{} \dIcAsimALr{} en A y \dCsimCLr{} \dIcCsimCLr{} en C
+(logística). Todos los intervalos incluyen el cero en los tres algoritmos (Tabla~\ref{tab:sens}).
+Es el resultado esperado de un generador no circular: el LMS simulado no contiene información sobre
+$G3$ más allá de las covariables reales que ya están en el modelo.
+\item \textbf{Contrafactual didáctico de circularidad.} Si el LMS se hubiera generado “correlacionado
+con el riesgo real”, como proponía el avance (aquí, $\text{minutos} \propto e^{0{,}15\,G3}$), el
+escenario C pasaría de AUC \circCHonesto{} a \circCMasCircular{}. Sería una mejora ficticia de \circDifC{}, producida solo por la construcción de los datos. Esta cifra cuantifica el riesgo que motivó
+el rediseño del generador.
+\item \textbf{Faltas anuales.} Añadirlas al modelo temprano no mejora el AUC (\dAfalALr{}
+\dIcAfalALr{}). Por tanto, excluirlas por fuga temporal (L-02) no tiene costo.
+\end{itemize}
+\textbf{Separación de hallazgos.} Todos los hallazgos sustantivos (§\ref{sec:p1}, §\ref{sec:p2}, §\ref{sec:principal} en sus factores reales y §\ref{sec:modelo}) provienen de datos reales. Las cifras sobre LMS, tutorías, alertas y texto
+son demostraciones de que el pipeline integra, valida y consulta evidencia heterogénea.
+
+\subsection{Componente no estructurado: texto libre de las alertas}\label{sec:texto}
+Las \nNotasTexto{} notas de orientación\SIM{} se normalizaron (minúsculas, expansión de
+abreviaturas como “est.” $\rightarrow$ “estudiante”, eliminación de tildes, puntuación y espacios
+repetidos), se tokenizaron sin palabras vacías y se categorizaron por léxico en académico,
+asistencia, familiar, conducta y motivación (\texttt{transform\_synthetic.py::categorizar}). Los
+resultados se guardan en el propio documento (\texttt{texto\_normalizado}, \texttt{categoria}),
+se indexan con un índice de texto en español y se agregan con AG-06 (Tabla~\ref{tab:ag06}). La Tabla~\ref{tab:texto} muestra ejemplos de la normalización y la Tabla~\ref{tab:terminos} (Anexo~F) los términos más frecuentes. La
+exactitud frente a la categoría verdadera del generador es \exactitudTexto{}. \textbf{Este valor no
+mide la capacidad de generalizar}: el léxico se construyó conociendo las plantillas del generador,
+por lo que solo demuestra que la transformación está bien implementada. Con notas reales se
+necesitaría una muestra etiquetada por orientadores y un clasificador supervisado evaluado en datos
+no vistos.
+
+\begin{table}[H]
+\centering\scriptsize
+\begin{minipage}[t]{0.46\textwidth}\centering
+\caption{AG-06\SIM: categoría inferida $\times$ nivel de alerta.}\label{tab:ag06}
+\ajustar{generated/tab_mongo_ag06.tex}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.5\textwidth}\centering
+\caption{Ejemplos de normalización\SIM.}\label{tab:texto}
+\ajustar{generated/tab_texto_ejemplos.tex}
+\end{minipage}
+\fuente{\texttt{results/mongo\_AG-06.csv} y \texttt{results/texto\_ejemplos.csv}. Datos simulados.}
+\end{table}
+
+\subsection{Utilidad y limitaciones de los resultados}
+\textbf{Utilidad.} Al cierre de P1, una regla basada en el modelo A identificaría al \recALr{} de los estudiantes que reprobarán (recall), y el \precALr{} de las derivaciones serían correctas (precisión). Es un criterio operativo y
+explicable para orientar tutorías.
+
+\textbf{Limitaciones.}
+\begin{enumerate}[label=(\roman*)]
+\item Los datos son \emph{observacionales}: ninguna asociación es causal.
+\item La población es de dos centros portugueses en 2005--2006; la validez externa es limitada.
+\item $G1$ domina la predicción; el modelo no identifica a quien reprobará pese a aprobar P1 (\persMatApr{} en MAT).
+\item Las fuentes F2 y F3 son simuladas: su utilidad predictiva real está por demostrar.
+\item El conjunto de prueba es pequeño (\nTest{} matrículas), de ahí la anchura de los IC.
+\item La identidad tiene \nFalsosNeg{} posibles falsos negativos.
+\item El umbral de recall 0,80 es una decisión de política que debería fijar la institución según su capacidad de tutoría.
+\end{enumerate}
+
+% =============================================================================
+\section{Conclusiones y recomendaciones}
+% =============================================================================
+\subsection{Conclusiones}
+\begin{enumerate}
+\item \textbf{Arquitectura.} El almacenamiento híbrido es coherente con el problema. PostgreSQL en 3FN
+garantiza la integridad del registro académico: \nControlesOk{} de \nControlesSql{} controles
+superados. MongoDB, con validadores \texttt{\$jsonSchema} y \texttt{\$expr}, modela la evidencia
+anidada y variable con cobertura total. Parquet sirve de contrato con la capa analítica.
+\item \textbf{Calidad.} Los principales problemas del registro UCI eran semánticos: identidad, notas 0
+y faltas no confiables. La regla de identidad en dos etapas corrigió las cifras del avance a
+\nEst{} estudiantes, \nMat{} matrículas y \nCal{} calificaciones, y recuperó 16 matrículas reales
+que se habían perdido. Las reglas sobre datos simulados detectaron exactamente los defectos
+inyectados.
+\item \textbf{P1.} La reprobación se concentra en Matemáticas (ambos centros) y en Portugués en
+Mousinho da Silveira (\tasaPorMs{}). La nota media apenas varía a lo largo del curso cuando se
+excluyen los abandonos.
+\item \textbf{P2 y pregunta principal.} Las reprobaciones previas y la inasistencia distinguen el bajo
+rendimiento y se acumulan: la reprobación pasa de \gradCero{} sin factores a \gradDos{} con ambos.
+\item \textbf{Predicción temprana.} Con información del primer período, sin $G3$, sin faltas anuales y
+sin compartir estudiantes entre entrenamiento y prueba, un modelo logístico interpretable alcanza un
+AUC de \aucALr{} y un recall de \recALr{}. La nota $G1$ aporta casi toda la señal.
+\item \textbf{Datos simulados.} No aportan información predictiva ($\Delta$AUC = \dAsimALr{}), como
+exige un generador no circular. El contrafactual muestra que un generador circular habría fabricado
+una mejora de \circDifC{} en el AUC.
+\item \textbf{Escalabilidad.} Spark no está justificado. El benchmark procesa \benchMaxFilas{} eventos
+en \benchMaxT{} s en un solo nodo, y el caso real está \benchOrdenes{} órdenes de magnitud por debajo de ese umbral.
+\end{enumerate}
+
+\subsection{Recomendaciones para la coordinación y la orientación}
+\begin{itemize}
+\item Institucionalizar una \textbf{alerta al cierre del primer período}: toda matrícula con $G1<10$ o
+con probabilidad del modelo A superior al umbral se deriva a tutoría antes de enero.
+\item Priorizar \textbf{Matemáticas} en ambos centros y \textbf{Portugués en Mousinho da Silveira}.
+\item Dar seguimiento específico a los estudiantes con \textbf{reprobaciones previas} desde la
+matrícula (escenario C), antes incluso de la primera nota.
+\item Registrar la asistencia por período, no solo anual, y codificar explícitamente los abandonos, en
+lugar de registrar notas 0 con 0 faltas.
+\end{itemize}
+
+\subsection{Mejoras y próximos pasos}
+\begin{enumerate}
+\item Sustituir F2 y F3 por exportaciones reales del LMS y del departamento de orientación, reutilizando validadores y reglas, y repetir la sensibilidad.
+\item Evaluar el efecto de las tutorías con un diseño cuasiexperimental (p. ej., regresión discontinua en el umbral $G1 = 10$).
+\item Validar el modelo en una cohorte posterior (validación temporal) y recalibrarlo por centro.
+\item Añadir un clasificador supervisado de texto entrenado con notas etiquetadas.
+\item Orquestar el pipeline con un planificador (p. ej., Airflow) y publicar el tablero de alertas desde la colección \texttt{alertas\_riesgo}.
+\end{enumerate}
+
+% =============================================================================
+\section{Evidencias técnicas}
+% =============================================================================
+La Tabla~\ref{tab:repo} describe la estructura del repositorio.
+
+\textbf{Repositorio:} \repourl{}\\
+\textbf{Copia adjunta:} \repozip{}. Contiene la estructura completa de la Tabla~\ref{tab:repo}: datos, código, consultas, resultados, registros de ejecución y la fuente de este informe. Se reproduce con las instrucciones siguientes.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Estructura del repositorio y artefactos entregados.}\label{tab:repo}
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{10.8cm}}
+\toprule
+Ruta & Contenido \\
+\midrule
+\texttt{run\_pipeline.py} & Punto de entrada único (etapas 1–11). \\
+\texttt{docker-compose.yml}, \texttt{.env.example} & PostgreSQL 16 y MongoDB 8; variables de conexión sin secretos. \\
+\texttt{requirements.txt}, \texttt{requirements-lock.txt} & Versiones fijadas y entorno congelado. \\
+\texttt{data/raw/} & \texttt{student-mat.csv}, \texttt{student-por.csv} (UCI) y \texttt{synthetic/} (JSON crudos + verdad del generador). \\
+\texttt{data/staging/} & Tablas 3FN, evidencia de identidad, documentos Mongo, cuarentena. \\
+\texttt{data/processed/} & \texttt{dataset\_analitico.parquet} (+ \texttt{.csv}), \texttt{diccionario\_datos.csv}, \texttt{linaje.csv}, \texttt{mapeo\_avance\_final.csv}. \\
+\texttt{sql/} & \texttt{01\_ddl.sql}, \texttt{02\_vistas\_seguridad.sql}, \texttt{03\_integridad.sql}, \texttt{04\_analiticas.sql}. \\
+\texttt{mongo/} & \texttt{validadores.json}, \texttt{indices.json}, \texttt{pipelines.json} (ejecutables también desde \texttt{mongosh}). \\
+\texttt{src/} & \texttt{config}, \texttt{tracking}, \texttt{extract}, \texttt{transform}, \texttt{generate\_synthetic}, \texttt{transform\_synthetic}, \texttt{load}, \texttt{integrate}, \texttt{analysis}, \texttt{benchmark\_escalabilidad}, \texttt{report\_tables}. \\
+\texttt{tests/test\_pipeline.py} & 17 pruebas \texttt{pytest}. \\
+\texttt{notebooks/analisis.ipynb} & Notebook ejecutado: consultas SQL y pipelines Mongo en vivo, reproducción del AUC principal. \\
+\texttt{results/}, \texttt{logs/} & Salidas de consultas, pruebas y modelos; conteos por etapa, reglas y checksums. \\
+\texttt{informe/} & \texttt{main.tex}, \texttt{generated/} (tablas y macros), \texttt{figuras/}, PDF final. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Instrucciones de ejecución.}
+\begin{lstlisting}[language=bash]
+cp .env.example .env && docker compose up -d --wait        # PostgreSQL 16 + MongoDB 8
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+.venv/bin/python run_pipeline.py --informe                  # pipeline completo + PDF (~90 s)
+.venv/bin/python -m pytest -q                               # 17 pruebas
+\end{lstlisting}
+
+\textbf{Datos de ejemplo.} El Listado~\ref{lst:ejemplo} muestra un documento real de la colección
+\texttt{seguimiento\_riesgo} tras la carga, recortado a dos eventos. El Anexo~F reproduce una alerta
+con su historial y sus notas.
+
+\lstinputlisting[caption={Documento de \texttt{seguimiento\_riesgo}\SIM{} (estudiante 1, período P1; recortado a dos eventos; generado desde \texttt{results/mongo\_documentos\_ejemplo.json}).}, label=lst:ejemplo]{generated/ejemplo_seguimiento.json}
+
+% =============================================================================
+\section*{Referencias}
+\addcontentsline{toc}{section}{Referencias}
+% =============================================================================
+\begingroup
+\setlength{\parindent}{-1.27cm}\setlength{\leftskip}{1.27cm}\setlength{\parskip}{0.35em}\small
+
+Apache Software Foundation. (2024). \emph{Apache Parquet documentation}. \url{https://parquet.apache.org/docs/}
+
+Breiman, L. (2001). Random forests. \emph{Machine Learning, 45}(1), 5–32. \url{https://doi.org/10.1023/A:1010933404324}
+
+Cliff, N. (1993). Dominance statistics: Ordinal analyses to answer ordinal questions. \emph{Psychological Bulletin, 114}(3), 494–509. \url{https://doi.org/10.1037/0033-2909.114.3.494}
+
+Cortez, P. (2008). \emph{Student performance} [Conjunto de datos]. UCI Machine Learning Repository. \url{https://doi.org/10.24432/C5TG7T}
+
+Cortez, P., \& Silva, A. M. G. (2008). Using data mining to predict secondary school student performance. En A. Brito \& J. Teixeira (Eds.), \emph{Proceedings of 5th Future Business Technology Conference (FUBUTEC 2008)} (pp. 5–12). EUROSIS-ETI.
+
+Elmasri, R., \& Navathe, S. B. (2016). \emph{Fundamentals of database systems} (7.ª ed.). Pearson.
+
+Friedman, J. H. (2001). Greedy function approximation: A gradient boosting machine. \emph{The Annals of Statistics, 29}(5), 1189–1232. \url{https://doi.org/10.1214/aos/1013203451}
+
+Holm, S. (1979). A simple sequentially rejective multiple test procedure. \emph{Scandinavian Journal of Statistics, 6}(2), 65–70.
+
+Kaufman, S., Rosset, S., Perlich, C., \& Stitelman, O. (2012). Leakage in data mining: Formulation, detection, and avoidance. \emph{ACM Transactions on Knowledge Discovery from Data, 6}(4), Artículo 15. \url{https://doi.org/10.1145/2382577.2382579}
+
+Kleppmann, M. (2017). \emph{Designing data-intensive applications}. O'Reilly Media.
+
+MongoDB, Inc. (2024). \emph{MongoDB manual: Aggregation pipeline and schema validation}. \url{https://www.mongodb.com/docs/manual/}
+
+Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., \& Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research, 12}, 2825–2830.
+
+Romano, J., Kromrey, J. D., Coraggio, J., \& Skowronek, J. (2006). \emph{Appropriate statistics for ordinal level data: Should we really be using t-test and Cohen's d for evaluating group differences on the NSSE and other surveys?} [Ponencia]. Annual Meeting of the Florida Association of Institutional Research, Cocoa Beach, FL, Estados Unidos.
+
+Saito, T., \& Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. \emph{PLOS ONE, 10}(3), Artículo e0118432. \url{https://doi.org/10.1371/journal.pone.0118432}
+
+Seabold, S., \& Perktold, J. (2010). Statsmodels: Econometric and statistical modeling with Python. En \emph{Proceedings of the 9th Python in Science Conference} (pp. 92–96). \url{https://doi.org/10.25080/Majora-92bf1922-011}
+
+The PostgreSQL Global Development Group. (2024). \emph{PostgreSQL 16 documentation}. \url{https://www.postgresql.org/docs/16/}
+
+Wilson, E. B. (1927). Probable inference, the law of succession, and statistical inference. \emph{Journal of the American Statistical Association, 22}(158), 209–212. \url{https://doi.org/10.1080/01621459.1927.10502953}
+
+Zaharia, M., Xin, R. S., Wendell, P., Das, T., Armbrust, M., Dave, A., Meng, X., Rosen, J., Venkataraman, S., Franklin, M. J., Ghodsi, A., Gonzalez, J., Shenker, S., Zaharia, M., \& Stoica, I. (2016). Apache Spark: A unified engine for big data processing. \emph{Communications of the ACM, 59}(11), 56–65. \url{https://doi.org/10.1145/2934664}
+\par\endgroup
+
+% =============================================================================
+\appendix
+\renewcommand{\thesection}{\Alph{section}}
+\section{DDL completo (PostgreSQL)}
+\lstinputlisting[language=SQL, caption={\texttt{sql/01\_ddl.sql}.}]{../sql/01_ddl.sql}
+\lstinputlisting[language=SQL, caption={\texttt{sql/02\_vistas\_seguridad.sql}.}]{../sql/02_vistas_seguridad.sql}
+
+\section{Diccionario de datos del dataset analítico}
+Archivo: \texttt{data/processed/dataset\_analitico.parquet} (\nFilasDs{} filas $\times$ \nColsDs{}
+columnas; tipos explícitos). Origen: \emph{F1 real} = UCI; \emph{F2/F3 SIMULADO}; \emph{Derivada} =
+calculada en el ETL.
+\input{generated/tab_diccionario_lt.tex}
+
+\section{Linaje de las variables}
+\input{generated/tab_linaje_lt.tex}
+
+\section{Correspondencia con el dataset esperado del avance}
+\begin{table}[H]
+\centering\scriptsize
+\caption{Variables del dataset esperado en el avance y su tratamiento final.}\label{tab:mapeo}
+\ajustar{generated/tab_mapeo_avance.tex}
+\fuente{\texttt{data/processed/mapeo\_avance\_final.csv}.}
+\end{table}
+
+\section{Posibles falsos negativos de la regla de identidad}
+\begin{table}[H]
+\centering\small
+\caption{Pares sin emparejar que coinciden en 26 de 27 atributos (regla R-12b; no fusionados).}\label{tab:fn}
+\ajustar{generated/tab_falsos_negativos.tex}
+\fuente{\texttt{data/staging/identidad\_posibles\_falsos\_negativos.csv}. Línea = número de línea en el CSV original.}
+\end{table}
+
+\section{Salidas adicionales}
+\lstinputlisting[caption={Documento de \texttt{alertas\_riesgo}\SIM{} con historial y notas normalizadas (\texttt{results/mongo\_documentos\_ejemplo.json}).}, firstline=1]{generated/ejemplo_alerta.json}
+
+\begin{table}[H]
+\centering\small
+\caption{Términos más frecuentes en las notas normalizadas\SIM.}\label{tab:terminos}
+\ajustar{generated/tab_texto_terminos.tex}
+\fuente{\texttt{results/texto\_terminos.csv}.}
+\end{table}
+
+\end{document}

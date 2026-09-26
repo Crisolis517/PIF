@@ -1,0 +1,16 @@
+modelo,comparacion,delta_auc,ic_lo,ic_hi
+Regresión logística,A_mas_sim − A_corte_P1,0.000365,-0.003547,0.004206
+Regresión logística,C_mas_sim − C_matricula,-0.000487,-0.015449,0.012422
+Regresión logística,A_mas_faltas − A_corte_P1,-0.003288,-0.009882,0.002315
+Regresión logística,B_corte_P2 − A_corte_P1,0.035684,0.016836,0.058257
+Regresión logística,A_corte_P1 − C_matricula,0.210693,0.144784,0.282564
+Random forest,A_mas_sim − A_corte_P1,0.004872,-0.005351,0.01548
+Random forest,C_mas_sim − C_matricula,0.005115,-0.029012,0.039018
+Random forest,A_mas_faltas − A_corte_P1,0.001218,-0.00758,0.009869
+Random forest,B_corte_P2 − A_corte_P1,0.047254,0.0211,0.078714
+Random forest,A_corte_P1 − C_matricula,0.190354,0.126909,0.260726
+Gradient boosting,A_mas_sim − A_corte_P1,0.003897,-0.006443,0.015271
+Gradient boosting,C_mas_sim − C_matricula,0.015589,-0.015416,0.048387
+Gradient boosting,A_mas_faltas − A_corte_P1,0.009378,-0.001774,0.021754
+Gradient boosting,B_corte_P2 − A_corte_P1,0.040434,0.017895,0.065287
+Gradient boosting,A_corte_P1 − C_matricula,0.182195,0.122238,0.249971

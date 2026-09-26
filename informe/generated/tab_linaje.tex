@@ -1,0 +1,64 @@
+\begin{tabular}{p{3.9cm}p{2.0cm}p{6.8cm}p{2.2cm}}
+\toprule
+Variable & Origen & Tabla/colección y campo (transformación) & Regla \\
+\midrule
+\texttt{estudiante\_id} & F1 real & academico.matricula.estudiante\_id & R-12 identidad \\
+\texttt{asignatura} & F1 real & academico.asignatura.codigo & R-06 \\
+\texttt{escuela} & F1 real & academico.escuela.codigo (school) & R-06 \\
+\texttt{sexo} & F1 real & estudiante.sexo (sex) & R-06 \\
+\texttt{edad} & F1 real & estudiante.edad (age) & — \\
+\texttt{zona} & F1 real & estudiante.zona (address) & R-06 \\
+\texttt{tamano\_familia} & F1 real & estudiante.tamano\_familia (famsize) & R-06 \\
+\texttt{estado\_padres} & F1 real & estudiante.estado\_padres (Pstatus) & R-06 \\
+\texttt{educ\_madre} & F1 real & estudiante.educ\_madre (Medu) & — \\
+\texttt{educ\_padre} & F1 real & estudiante.educ\_padre (Fedu) & — \\
+\texttt{trabajo\_madre} & F1 real & estudiante.trabajo\_madre (Mjob) & R-06 \\
+\texttt{trabajo\_padre} & F1 real & estudiante.trabajo\_padre (Fjob) & R-06 \\
+\texttt{motivo\_eleccion} & F1 real & estudiante.motivo\_eleccion (reason) & R-06 \\
+\texttt{tutor\_legal} & F1 real & estudiante.tutor\_legal (guardian) & R-06 \\
+\texttt{tiempo\_viaje} & F1 real & estudiante.tiempo\_viaje (traveltime) & — \\
+\texttt{tiempo\_estudio} & F1 real & estudiante.tiempo\_estudio (studytime) & — \\
+\texttt{apoyo\_escolar} & F1 real & estudiante.apoyo\_escolar (schoolsup) & R-06 \\
+\texttt{apoyo\_familiar} & F1 real & estudiante.apoyo\_familiar (famsup) & R-06 \\
+\texttt{actividades} & F1 real & estudiante.actividades (activities) & R-06 \\
+\texttt{guarderia} & F1 real & estudiante.guarderia (nursery) & R-06 \\
+\texttt{desea\_superior} & F1 real & estudiante.desea\_superior (higher) & R-06 \\
+\texttt{internet} & F1 real & estudiante.internet (internet) & R-06 \\
+\texttt{relacion\_romantica} & F1 real & estudiante.relacion\_romantica (romantic) & R-06 \\
+\texttt{relacion\_familiar} & F1 real & estudiante.relacion\_familiar (famrel) & — \\
+\texttt{tiempo\_libre} & F1 real & estudiante.tiempo\_libre (freetime) & — \\
+\texttt{salidas} & F1 real & estudiante.salidas (goout) & — \\
+\texttt{alcohol\_semana} & F1 real & estudiante.alcohol\_semana (Dalc) & — \\
+\texttt{alcohol\_finde} & F1 real & estudiante.alcohol\_finde (Walc) & — \\
+\texttt{salud} & F1 real & estudiante.salud (health) & — \\
+\texttt{reprobaciones\_previas} & F1 real & matricula.reprobaciones\_previas (failures) & R-07 \\
+\texttt{reprobaciones\_3mas} & Derivada & reprobaciones\_previas = 3 & R-07 \\
+\texttt{clases\_pagadas} & F1 real & matricula.clases\_pagadas (paid) & R-06 \\
+\texttt{faltas} & F1 real & matricula.faltas (absences) & — \\
+\texttt{faltas\_confiable} & Derivada & matricula.faltas\_confiable & R-09 \\
+\texttt{faltas\_atipicas} & Derivada & faltas > Q3 + 3$\cdot$RIC por asignatura & R-10 \\
+\texttt{nota\_p1} & F1 real & calificacion.nota, periodo P1 (G1) & R-14 \\
+\texttt{nota\_p2} & F1 real & calificacion.nota, periodo P2 (G2) & R-14 \\
+\texttt{nota\_p3} & F1 real & calificacion.nota, periodo P3 (G3) & R-14 \\
+\texttt{no\_evaluado\_p1} & Derivada & calificacion.no\_evaluado, P1 & R-08 \\
+\texttt{no\_evaluado\_p2} & Derivada & calificacion.no\_evaluado, P2 & R-08 \\
+\texttt{no\_evaluado\_p3} & Derivada & calificacion.no\_evaluado, P3 & R-08 \\
+\texttt{en\_ambas\_asignaturas} & Derivada & COUNT(matricula) = 2 & R-12 \\
+\texttt{en\_riesgo} & Derivada (objetivo) & nota\_p3 < 10 & Def. operativa \\
+\texttt{rendimiento\_sobre\_promedio} & Derivada & nota\_p3 > media de la asignatura & P2 \\
+\texttt{sim\_lms\_eventos\_p1} & F2 SIMULADO & seguimiento\_riesgo.interacciones\_lms (P1), AG-01 & R-15…R-22, R-26 \\
+\texttt{sim\_lms\_minutos\_p1} & F2 SIMULADO & interacciones\_lms.duracion\_min (P1), AG-01 & R-21, R-22, R-26 \\
+\texttt{sim\_lms\_dias\_activos\_p1} & F2 SIMULADO & interacciones\_lms.fecha (P1), AG-01 & R-26 \\
+\texttt{sim\_lms\_tareas\_revisadas\_p1} & F2 SIMULADO & interacciones\_lms.revisada (P1), AG-01 & R-26 \\
+\texttt{sim\_lms\_eventos\_total} & F2 SIMULADO & interacciones\_lms (P1–P3), AG-01 & R-26 \\
+\texttt{sim\_lms\_minutos\_total} & F2 SIMULADO & interacciones\_lms (P1–P3), AG-01 & R-26 \\
+\texttt{sim\_n\_tutorias} & F3 SIMULADO & seguimiento\_riesgo.tutorias, AG-02 & R-23, R-26 \\
+\texttt{sim\_n\_tutorias\_completadas} & F3 SIMULADO & tutorias.resultado = completada, AG-02 & R-23, R-26 \\
+\texttt{sim\_n\_alertas} & F3 SIMULADO & alertas\_riesgo, AG-03 & R-24, R-26 \\
+\texttt{sim\_nivel\_alerta\_max} & F3 SIMULADO & alertas\_riesgo.nivel, AG-03 & R-26 \\
+\texttt{sim\_alerta\_cerrada} & F3 SIMULADO & alertas\_riesgo.estado, AG-03 & R-24, R-26 \\
+\texttt{particion} & Derivada & StratifiedGroupKFold(5, seed 42), 1.er pliegue & L-04 \\
+\texttt{archivo\_origen} & Linaje & matricula.archivo\_origen & — \\
+\texttt{fila\_origen} & Linaje & matricula.fila\_origen & — \\
+\bottomrule
+\end{tabular}

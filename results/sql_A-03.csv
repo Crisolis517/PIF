@@ -1,0 +1,9 @@
+asignatura,estado_p1,estado_p3,n
+MAT,aprueba_P1,aprueba_P3,227
+MAT,aprueba_P1,reprueba_P3,26
+MAT,reprueba_P1,aprueba_P3,38
+MAT,reprueba_P1,reprueba_P3,104
+POR,aprueba_P1,aprueba_P3,480
+POR,aprueba_P1,reprueba_P3,12
+POR,reprueba_P1,aprueba_P3,69
+POR,reprueba_P1,reprueba_P3,88

@@ -1,0 +1,10 @@
+n,nivel,estado
+17,alto,abierta
+60,alto,cerrada
+31,alto,en_seguimiento
+2,bajo,abierta
+13,bajo,cerrada
+1,bajo,en_seguimiento
+26,medio,abierta
+104,medio,cerrada
+28,medio,en_seguimiento

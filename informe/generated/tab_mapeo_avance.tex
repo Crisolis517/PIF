@@ -1,0 +1,16 @@
+\begin{tabular}{p{3.6cm}p{4.4cm}p{6.8cm}}
+\toprule
+Variable del avance & Variable final & Decisión \\
+\midrule
+\texttt{estudiante\_id} & \texttt{estudiante\_id} & Se mantiene; ahora con regla de identidad documentada (R-12). \\
+\texttt{periodo ("2026-1")} & \texttt{columnas nota\_p1/p2/p3 + corte} & Etiqueta errónea; los períodos son P1–P3 de 2005–06 (config.PERIODOS). \\
+\texttt{escuela, zona, tiempo\_estudio} & \texttt{escuela, zona, tiempo\_estudio} & Sin cambios. \\
+\texttt{promedio\_general} & \texttt{nota\_p1 (y nota\_p2 en el escenario B)} & Eliminado: incluía G3 (fuga de información). \\
+\texttt{faltas\_totales} & \texttt{faltas} & Por matrícula; anual (no se usa en el modelo temprano, L-02). \\
+\texttt{reprobaciones\_totales} & \texttt{reprobaciones\_previas} & Por matrícula (failures depende de la asignatura). \\
+\texttt{n\_interacciones\_lms} & \texttt{sim\_lms\_eventos\_p1 / sim\_lms\_eventos\_total} & Prefijo sim\_: variable simulada. \\
+\texttt{minutos\_lms} & \texttt{sim\_lms\_minutos\_p1 / sim\_lms\_minutos\_total} & Prefijo sim\_: variable simulada. \\
+\texttt{n\_tutorias} & \texttt{sim\_n\_tutorias} & Posterior al corte P1: solo descriptiva. \\
+\texttt{en\_riesgo} & \texttt{en\_riesgo} & Definida: G3 < 10 (incluye no evaluados). \\
+\bottomrule
+\end{tabular}

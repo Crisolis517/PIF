@@ -1,0 +1,16 @@
+\begin{tabular}{llrrr}
+\toprule
+Etapa & Operación & Entrada & Rechazados & Salida \\
+\midrule
+Extract & CSV UCI leídos (MAT + POR) & 395 + 649 & 0 & 1\,044 \\
+Transform F1 & Resolución de identidad & 1\,044 filas & 0 & 674 estudiantes \\
+Transform F1 & Normalización 3FN & 1\,044 matrículas & 0 & 3\,132 calificaciones \\
+Generate & Eventos LMS simulados + duplicados & 48\,892 & -- & -- \\
+Transform F2 & Limpieza de eventos (R-15…R-22) & 48\,892 & 1\,295 & 47\,597 \\
+Transform F3 & Limpieza de tutorías (R-23) & 550 & 6 & 544 \\
+Transform F3 & Alertas (R-24, R-25) & 282 & 0 & 282 \\
+Load SQL & Seis tablas en PostgreSQL & 4\,857 & 0 & 4\,857 \\
+Load NoSQL & seguimiento\_riesgo + alertas\_riesgo & 2\,304 & 0 & 2\,304 \\
+Integrate & Dataset analítico (matrículas) & 1\,044 & 0 & 1\,044 \\
+\bottomrule
+\end{tabular}

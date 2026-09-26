@@ -1,0 +1,57 @@
+{
+  "descriptivos": [
+    {
+      "asignatura": "MAT",
+      "n_matriculas": 395,
+      "en_riesgo": 130,
+      "prevalencia": 0.3291139240506329,
+      "ic_lo": 0.2846151134828661,
+      "ic_hi": 0.3769045279326178,
+      "nota_p1_mediana_ric": "11 [8–13]",
+      "nota_p3_mediana_ric": "11 [9–14]",
+      "faltas_mediana_ric": "4 [0–8]",
+      "no_evaluados_p3": 38,
+      "con_reprob_previas": 83
+    },
+    {
+      "asignatura": "POR",
+      "n_matriculas": 649,
+      "en_riesgo": 100,
+      "prevalencia": 0.15408320493066255,
+      "ic_lo": 0.1283499526309841,
+      "ic_hi": 0.18388735409417,
+      "nota_p1_mediana_ric": "11 [10–13]",
+      "nota_p3_mediana_ric": "12 [10–14]",
+      "faltas_mediana_ric": "2 [0–6]",
+      "no_evaluados_p3": 15,
+      "con_reprob_previas": 100
+    },
+    {
+      "asignatura": "Total",
+      "n_matriculas": 1044,
+      "en_riesgo": 230,
+      "prevalencia": 0.22030651340996169,
+      "ic_lo": 0.19621660041592331,
+      "ic_hi": 0.24644717750209316,
+      "nota_p1_mediana_ric": "",
+      "nota_p3_mediana_ric": "",
+      "faltas_mediana_ric": "",
+      "no_evaluados_p3": 53,
+      "con_reprob_previas": 183
+    }
+  ],
+  "circular": {
+    "auc_C_honesto": 0.7375471927901596,
+    "auc_C_mas_sim_honesto": 0.7370600414078675,
+    "auc_C_mas_circular": 0.8768724881256851,
+    "auc_A_honesto": 0.94824016563147,
+    "auc_A_mas_sim_honesto": 0.948605529168189,
+    "auc_A_mas_circular": 0.95956643526976
+  },
+  "texto": {
+    "n_notas": 575,
+    "exactitud": 1.0,
+    "indeterminadas": 0
+  },
+  "mejor_no_lineal": "Gradient boosting"
+}

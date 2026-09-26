@@ -1,0 +1,7 @@
+asignatura,periodo,n_evaluados,media,desv_est,mediana,n_no_evaluados
+MAT,P1,395,10.91,3.32,11.0,0
+MAT,P2,382,11.08,3.25,11.0,13
+MAT,P3,357,11.52,3.23,11.0,38
+POR,P1,648,11.42,2.71,11.0,1
+POR,P2,642,11.7,2.67,11.0,7
+POR,P3,634,12.19,2.69,12.0,15
