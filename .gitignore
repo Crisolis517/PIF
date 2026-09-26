@@ -1,0 +1,15 @@
+.venv/
+.env
+.pgdata/
+.mongodata/
+tools/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+logs/pipeline_*.log
+logs/*_server.log
+informe/*.aux
+informe/*.log
+informe/*.out
+informe/*.toc
